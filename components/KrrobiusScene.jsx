@@ -3,6 +3,24 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
+// The strip has 54 longitudinal divisions and 10 width divisions.
+// These phases are exact multiples of 1 / 54, while the track offsets
+// are exact width-grid positions for a half-width of 0.30. That means
+// every label rides an actual grid intersection rather than an arbitrary
+// point on the ribbon.
+const PORTFOLIO_ITEMS = [
+  { id: "about", label: "ABOUT ME", phase: 0 / 54, track: -0.18 },
+  { id: "projects", label: "PROJECTS", phase: 5 / 54, track: -0.06 },
+  { id: "research", label: "RESEARCH", phase: 10 / 54, track: 0.06 },
+  { id: "current-work", label: "CURRENT WORK", phase: 15 / 54, track: 0.18 },
+  { id: "experience", label: "EXPERIENCE", phase: 20 / 54, track: -0.18 },
+  { id: "tech-stack", label: "TECH STACK", phase: 25 / 54, track: -0.06 },
+  { id: "education", label: "EDUCATION", phase: 30 / 54, track: 0.06 },
+  { id: "achievements", label: "ACHIEVEMENTS", phase: 35 / 54, track: 0.18 },
+  { id: "resume", label: "RESUME", phase: 40 / 54, track: -0.06 },
+  { id: "contact", label: "CONTACT", phase: 45 / 54, track: 0.06 },
+];
+
 export default function KrrobiusScene() {
   const rootRef = useRef(null);
   const bgCanvasRef = useRef(null);
@@ -170,6 +188,74 @@ export default function KrrobiusScene() {
             );
             }
 
+
+
+            // ======================================================
+            // RIBBON FRAME FOR PORTFOLIO ITEMS
+            // ======================================================
+            //
+            // Uses exactly the same centerline + Möbius twist as the
+            // strip geometry. `trackOffset` is a fixed width position,
+            // so each label rides a longitudinal grid line.
+            function getRibbonFrame(u, trackOffset = 0) {
+              const t = u * TAU - Math.PI / 2;
+              const epsilon = 0.0005;
+              const referenceAxis = new THREE.Vector3(0, 0, 1);
+
+              const center = getCenterPoint(t);
+              const previous = getCenterPoint(t - epsilon);
+              const next = getCenterPoint(t + epsilon);
+
+              const tangent = next
+                .clone()
+                .sub(previous)
+                .normalize();
+
+              let across = new THREE.Vector3().crossVectors(
+                referenceAxis,
+                tangent
+              );
+
+              if (across.lengthSq() < 0.000001) {
+                across = new THREE.Vector3().crossVectors(
+                  new THREE.Vector3(0, 1, 0),
+                  tangent
+                );
+              }
+
+              across.normalize();
+
+              const binormal = new THREE.Vector3()
+                .crossVectors(tangent, across)
+                .normalize();
+
+              const twist = u * Math.PI - Math.PI / 4;
+
+              const widthDirection = across
+                .clone()
+                .multiplyScalar(Math.cos(twist))
+                .add(
+                  binormal
+                    .clone()
+                    .multiplyScalar(Math.sin(twist))
+                )
+                .normalize();
+
+              const point = center
+                .clone()
+                .add(widthDirection.clone().multiplyScalar(trackOffset));
+
+              const surfaceNormal = new THREE.Vector3()
+                .crossVectors(tangent, widthDirection)
+                .normalize();
+
+              return {
+                point,
+                tangent,
+                widthDirection,
+                surfaceNormal,
+              };
+            }
 
 
             // ======================================================
@@ -930,6 +1016,227 @@ export default function KrrobiusScene() {
 
 
             // ======================================================
+            // PORTFOLIO LABELS RIDING THE MÖBIUS GRID
+            // ======================================================
+
+            function roundedRect(ctx, x, y, width, height, radius) {
+              const r = Math.min(radius, width / 2, height / 2);
+
+              ctx.beginPath();
+              ctx.moveTo(x + r, y);
+              ctx.lineTo(x + width - r, y);
+              ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+              ctx.lineTo(x + width, y + height - r);
+              ctx.quadraticCurveTo(
+                x + width,
+                y + height,
+                x + width - r,
+                y + height
+              );
+              ctx.lineTo(x + r, y + height);
+              ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+              ctx.lineTo(x, y + r);
+              ctx.quadraticCurveTo(x, y, x + r, y);
+              ctx.closePath();
+            }
+
+
+            function createPortfolioTexture(label) {
+              const pixelRatio = 2;
+              const fontSize = 38;
+              const horizontalPadding = 42;
+              const verticalPadding = 24;
+
+              const measureCanvas = document.createElement("canvas");
+              const measureCtx = measureCanvas.getContext("2d");
+              measureCtx.font = `600 ${fontSize}px Arial, sans-serif`;
+
+              const measuredWidth = measureCtx.measureText(label).width;
+              const logicalWidth = Math.ceil(
+                measuredWidth + horizontalPadding * 2
+              );
+              const logicalHeight = fontSize + verticalPadding * 2;
+
+              const canvas = document.createElement("canvas");
+              canvas.width = logicalWidth * pixelRatio;
+              canvas.height = logicalHeight * pixelRatio;
+
+              const ctx = canvas.getContext("2d");
+              ctx.scale(pixelRatio, pixelRatio);
+
+              roundedRect(
+                ctx,
+                1,
+                1,
+                logicalWidth - 2,
+                logicalHeight - 2,
+                18
+              );
+
+              ctx.fillStyle = "rgba(0, 0, 0, 0.82)";
+              ctx.fill();
+
+              ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
+              ctx.lineWidth = 1;
+              ctx.stroke();
+
+              ctx.font = `600 ${fontSize}px Arial, sans-serif`;
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.fillStyle = "#ffffff";
+              ctx.fillText(
+                label,
+                logicalWidth / 2,
+                logicalHeight / 2 + 1
+              );
+
+              const texture = new THREE.CanvasTexture(canvas);
+              texture.minFilter = THREE.LinearFilter;
+              texture.magFilter = THREE.LinearFilter;
+              texture.generateMipmaps = false;
+
+              return {
+                texture,
+                aspect: logicalWidth / logicalHeight,
+              };
+            }
+
+
+            const portfolioSprites = PORTFOLIO_ITEMS.map((item) => {
+              const { texture, aspect } = createPortfolioTexture(item.label);
+
+              const spriteMaterial = new THREE.SpriteMaterial({
+                map: texture,
+                transparent: true,
+                opacity: 1,
+                depthTest: true,
+                depthWrite: false,
+                sizeAttenuation: true,
+              });
+
+              const sprite = new THREE.Sprite(spriteMaterial);
+
+              const baseHeight = 0.22;
+              const baseWidth = baseHeight * aspect;
+
+              sprite.scale.set(baseWidth, baseHeight, 1);
+              sprite.userData = {
+                ...item,
+                baseWidth,
+                baseHeight,
+                texture,
+                hovered: false,
+              };
+
+              scene.add(sprite);
+              return sprite;
+            });
+
+
+            // The strip shader moves its longitudinal grid at:
+            // u = uTime * 0.60 / 54.0
+            // Matching that speed makes these labels visually ride
+            // the same moving grid instead of sliding independently.
+            const portfolioOrbitSpeed = 0.60 / 54.0;
+
+
+            function updatePortfolioItems(time) {
+              for (const sprite of portfolioSprites) {
+                const u =
+                  (sprite.userData.phase +
+                    time * portfolioOrbitSpeed) %
+                  1;
+
+                const frame = getRibbonFrame(
+                  u,
+                  sprite.userData.track
+                );
+
+                const toCamera = camera.position
+                  .clone()
+                  .sub(frame.point);
+
+                // Put the label a tiny distance above whichever side
+                // of the Möbius surface currently faces the camera.
+                if (frame.surfaceNormal.dot(toCamera) < 0) {
+                  frame.surfaceNormal.negate();
+                }
+
+                const worldPoint = frame.point
+                  .clone()
+                  .add(
+                    frame.surfaceNormal
+                      .clone()
+                      .multiplyScalar(0.035)
+                  );
+
+                sprite.position.copy(worldPoint);
+
+                // The centerline z ranges roughly from -0.55 to +0.55.
+                // Larger z is closer to the camera, so labels naturally
+                // grow as they come forward and shrink as they recede.
+                const depth01 = THREE.MathUtils.clamp(
+                  (worldPoint.z + 0.62) / 1.24,
+                  0,
+                  1
+                );
+
+                const depthScale = THREE.MathUtils.lerp(
+                  0.58,
+                  1.18,
+                  depth01
+                );
+
+                const hoverScale = sprite.userData.hovered
+                  ? 1.12
+                  : 1;
+
+                const finalScale = depthScale * hoverScale;
+
+                sprite.scale.set(
+                  sprite.userData.baseWidth * finalScale,
+                  sprite.userData.baseHeight * finalScale,
+                  1
+                );
+
+                sprite.material.opacity = THREE.MathUtils.lerp(
+                  0.30,
+                  1.0,
+                  depth01
+                );
+
+                // Helps with overlap at the infinity crossing while still
+                // leaving depth testing in charge of true occlusion.
+                sprite.renderOrder = Math.round(depth01 * 10);
+              }
+            }
+
+
+            const portfolioRaycaster = new THREE.Raycaster();
+            const portfolioPointer = new THREE.Vector2();
+
+
+            function getPortfolioHit(event) {
+              portfolioPointer.x =
+                (event.clientX / window.innerWidth) * 2 - 1;
+              portfolioPointer.y =
+                -(event.clientY / window.innerHeight) * 2 + 1;
+
+              portfolioRaycaster.setFromCamera(
+                portfolioPointer,
+                camera
+              );
+
+              const hits = portfolioRaycaster.intersectObjects(
+                portfolioSprites,
+                false
+              );
+
+              return hits[0]?.object ?? null;
+            }
+
+
+            // ======================================================
             // BACKGROUND VECTOR FIELD
             // ======================================================
 
@@ -959,11 +1266,11 @@ export default function KrrobiusScene() {
 
 
             // General radius over which cursor is strongest
-            fieldRadius: 300,
+            fieldRadius: 280,
 
 
             // Swirling / rotational component
-            curlStrength: 1.00,
+            curlStrength: 1.15,
 
 
             // Direct attraction toward mouse
@@ -2097,6 +2404,35 @@ export default function KrrobiusScene() {
                 mouse.x = event.clientX;
                 mouse.y = event.clientY;
                 mouse.active = true;
+
+                const hoveredSprite = getPortfolioHit(event);
+
+                for (const sprite of portfolioSprites) {
+                  sprite.userData.hovered =
+                    sprite === hoveredSprite;
+                }
+
+                rootElement.style.cursor = hoveredSprite
+                  ? "pointer"
+                  : "default";
+            };
+
+            const handlePortfolioClick = (event) => {
+              const hit = getPortfolioHit(event);
+
+              if (!hit) return;
+
+              const targetId = hit.userData.id;
+
+              // For now this behaves like portfolio navigation.
+              // Later you can replace this with a modal/panel transition.
+              window.location.hash = targetId;
+
+              window.dispatchEvent(
+                new CustomEvent("krrobius:navigate", {
+                  detail: { id: targetId },
+                })
+              );
             };
 
             const handlePointerLeave = () => {
@@ -2108,6 +2444,7 @@ export default function KrrobiusScene() {
             };
 
             window.addEventListener("pointermove", handlePointerMove);
+            window.addEventListener("pointerup", handlePortfolioClick);
             document.documentElement.addEventListener("pointerleave", handlePointerLeave);
             window.addEventListener("blur", handleWindowBlur);
 
@@ -2202,8 +2539,13 @@ export default function KrrobiusScene() {
             renderVectorField();
 
 
+            // Portfolio labels riding the strip
+            updatePortfolioItems(
+                elapsedTime
+            );
 
-            // Möbius
+
+            // Möbius + portfolio labels
             renderer.render(
                 scene,
                 camera
@@ -2221,9 +2563,18 @@ export default function KrrobiusScene() {
       }
 
       window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePortfolioClick);
       document.documentElement.removeEventListener("pointerleave", handlePointerLeave);
       window.removeEventListener("blur", handleWindowBlur);
       window.removeEventListener("resize", handleResize);
+
+      for (const sprite of portfolioSprites) {
+        scene.remove(sprite);
+        sprite.material.dispose();
+        sprite.userData.texture.dispose();
+      }
+
+      rootElement.style.cursor = "default";
 
       geometry.dispose();
       material.dispose();
@@ -2236,8 +2587,16 @@ export default function KrrobiusScene() {
   }, []);
 
   return (
-    <div ref={rootRef} className="krrobius-root" aria-hidden="true">
-      <canvas ref={bgCanvasRef} id="bgCanvas" />
+    <div ref={rootRef} className="krrobius-root">
+      <canvas ref={bgCanvasRef} id="bgCanvas" aria-hidden="true" />
+
+      <nav className="portfolio-sr-nav" aria-label="Portfolio sections">
+        {PORTFOLIO_ITEMS.map((item) => (
+          <a key={item.id} href={`#${item.id}`}>
+            {item.label}
+          </a>
+        ))}
+      </nav>
     </div>
   );
 }
