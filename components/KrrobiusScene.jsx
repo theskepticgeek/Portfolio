@@ -1,25 +1,23 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 // The strip has 54 longitudinal divisions and 10 width divisions.
-// These phases are exact multiples of 1 / 54, while the track offsets
-// are exact width-grid positions for a half-width of 0.30. That means
-// every label rides an actual grid intersection rather than an arbitrary
-// point on the ribbon.
+// Setting track to 0 centers every element directly on the central
+// longitudinal gridline of the ribbon, avoiding the outer corners and edges.
 const PORTFOLIO_ITEMS = [
-  { id: "about", label: "ABOUT ME", phase: 0 / 54, track: -0.18 },
-  { id: "projects", label: "PROJECTS", phase: 5 / 54, track: -0.06 },
-  { id: "research", label: "RESEARCH", phase: 10 / 54, track: 0.06 },
-  { id: "current-work", label: "CURRENT WORK", phase: 15 / 54, track: 0.18 },
-  { id: "experience", label: "EXPERIENCE", phase: 20 / 54, track: -0.18 },
-  { id: "tech-stack", label: "TECH STACK", phase: 25 / 54, track: -0.06 },
-  { id: "education", label: "EDUCATION", phase: 30 / 54, track: 0.06 },
-  { id: "achievements", label: "ACHIEVEMENTS", phase: 35 / 54, track: 0.18 },
-  { id: "resume", label: "RESUME", phase: 40 / 54, track: -0.06 },
-  { id: "contact", label: "CONTACT", phase: 45 / 54, track: 0.06 },
-  { id: "playground", label: "PLAYGROUND", phase: 50 / 54, track: 0.06 },
+  { id: "about", label: "ABOUT ME", phase: 0 / 54, track: 0 },
+  { id: "projects", label: "PROJECTS", phase: 5 / 54, track: 0 },
+  { id: "research", label: "RESEARCH", phase: 10 / 54, track: 0 },
+  { id: "current-work", label: "CURRENT WORK", phase: 15 / 54, track: 0 },
+  { id: "experience", label: "EXPERIENCE", phase: 20 / 54, track: 0 },
+  { id: "tech-stack", label: "TECH STACK", phase: 25 / 54, track: 0 },
+  { id: "education", label: "EDUCATION", phase: 30 / 54, track: 0 },
+  { id: "achievements", label: "ACHIEVEMENTS", phase: 35 / 54, track: 0 },
+  { id: "resume", label: "RESUME", phase: 40 / 54, track: 0 },
+  { id: "contact", label: "CONTACT", phase: 45 / 54, track: 0 },
+  { id: "playground", label: "PLAYGROUND", phase: 50 / 54, track: 0 },
 ];
 
 export default function KrrobiusScene() {
@@ -28,6 +26,58 @@ export default function KrrobiusScene() {
   const tooltipRef = useRef(null);
   const tooltipLabelRef = useRef(null);
   const tooltipSubRef = useRef(null);
+
+  // ======================================================
+  // NIGHT VIDEO PAGE TRANSITION
+  // ======================================================
+  // public/night.mp4 is available in the browser as /night.mp4.
+  // We keep the actual navigation action in a ref so the video can
+  // finish first, then perform whatever navigation was requested.
+  const [nightTransitionVisible, setNightTransitionVisible] = useState(false);
+  const transitionActiveRef = useRef(false);
+  const pendingNavigationRef = useRef(null);
+
+  const startNightTransition = (navigationAction) => {
+    if (transitionActiveRef.current) return;
+
+    transitionActiveRef.current = true;
+    pendingNavigationRef.current = navigationAction;
+    setNightTransitionVisible(true);
+  };
+
+  const finishNightTransition = () => {
+    const navigationAction = pendingNavigationRef.current;
+    pendingNavigationRef.current = null;
+
+    if (navigationAction) {
+      navigationAction();
+    }
+
+    // If the action performs a full page navigation, the page will unload.
+    // If it only changes a hash / dispatches an event, remove the overlay here.
+    transitionActiveRef.current = false;
+    setNightTransitionVisible(false);
+  };
+
+  const navigateToPortfolioItem = (targetId) => {
+    startNightTransition(() => {
+      if (targetId === "playground") {
+        window.location.href = "/portfolio/playground.html";
+        return;
+      }
+
+      // Preserve your existing navigation behavior for the other sections.
+      // If another component listens for "krrobius:navigate", it will now
+      // receive the event AFTER night.mp4 has finished.
+      window.location.hash = targetId;
+
+      window.dispatchEvent(
+        new CustomEvent("krrobius:navigate", {
+          detail: { id: targetId },
+        })
+      );
+    });
+  };
 
   useEffect(() => {
     const rootElement = rootRef.current;
@@ -1792,17 +1842,17 @@ export default function KrrobiusScene() {
 
                 // ===================================================
                 // PHASE-BASED RESIZING:
-                // Along the Möbius loop (u from 0 to 1):
-                // At u = 0.5 (front crossing), the strip is in the foreground,
-                // closest to the camera and visually at its largest -> token is BIG.
-                // At u = 0.0 / 1.0 (rear crossing), the strip recedes to the background
-                // and is visually at its smallest -> token transitions to SMALL.
+                // Gradual, balanced scaling:
+                // Tokens smoothly scale between 0.82x on the left side (u ~ 0.68)
+                // and 1.28x at the strip's right bottom (u ~ 0.18).
+                // The minimum of 0.82x ensures tokens never get too small with respect
+                // to the strip's thickness on the left side, keeping the transition gradual.
                 // ===================================================
-                const phaseT = (-Math.cos(u * TAU) + 1) * 0.5; // 0.0 at rear -> 1.0 at front
+                const phaseT = (Math.cos((u - 0.18) * TAU) + 1) * 0.5;
 
-                // Smooth scaling transition between 0.58x (small in background) to 1.38x (large in foreground)
-                const phaseScale = THREE.MathUtils.lerp(0.58, 1.38, phaseT);
-                const hoverScale = mesh.userData.hovered ? 1.22 : 1.0;
+                // Gradual scaling transition between 0.82x (left side) and 1.28x (right bottom)
+                const phaseScale = THREE.MathUtils.lerp(0.82, 1.28, phaseT);
+                const hoverScale = mesh.userData.hovered ? 1.20 : 1.0;
                 const finalSize = mesh.userData.baseSize * phaseScale * hoverScale;
 
                 mesh.scale.set(finalSize, finalSize, 1);
@@ -1831,12 +1881,12 @@ export default function KrrobiusScene() {
 
                 // Smooth opacity fade with depth
                 mesh.material.opacity = THREE.MathUtils.lerp(
-                  0.45,
+                  0.70,
                   1.0,
                   phaseT
                 );
 
-                mesh.renderOrder = Math.round(phaseT * 10);
+                mesh.renderOrder = Math.round((worldPoint.z + 1.0) * 10);
               }
             }
 
@@ -2611,20 +2661,8 @@ export default function KrrobiusScene() {
 
   const targetId = hit.userData.id;
 
-  // PLAYGROUND opens the standalone playground page.
-  if (targetId === "playground") {
-    window.location.href = "/portfolio/playground.html";
-    return;
-  }
-
-  // Other portfolio items keep their current navigation behavior.
-  window.location.hash = targetId;
-
-  window.dispatchEvent(
-    new CustomEvent("krrobius:navigate", {
-      detail: { id: targetId },
-    })
-  );
+  // Every 3D portfolio glyph now plays night.mp4 first.
+  navigateToPortfolioItem(targetId);
 };
 
             const handlePointerLeave = () => {
@@ -2785,7 +2823,58 @@ export default function KrrobiusScene() {
 
   return (
     <div ref={rootRef} className="krrobius-root">
+      {/* =====================================================
+          FULL-SCREEN NIGHT VIDEO TRANSITION
+
+          Put your file here:
+          public/night.mp4
+
+          Browser URL:
+          /night.mp4
+
+          The destination is opened only after this video ends.
+         ===================================================== */}
+      {nightTransitionVisible && (
+        <div
+          className="krrobius-night-transition"
+          style={{
+            position: "fixed",
+            inset: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 999999,
+            background: "#000",
+            overflow: "hidden",
+            pointerEvents: "all",
+          }}
+        >
+          <video
+            src="/night.mp4"
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            onEnded={finishNightTransition}
+            onError={finishNightTransition}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              background: "#000",
+            }}
+          />
+        </div>
+      )}
+
       <canvas ref={bgCanvasRef} id="bgCanvas" aria-hidden="true" />
+
+      {/* Title above the strip: KRROBIUS */}
+      <header className="krrobius-header">
+        <h1 className="krrobius-title">KRROBIUS</h1>
+        <p className="krrobius-subtitle">TOPOLOGICAL MANIFOLD // PORTFOLIO</p>
+      </header>
 
       {/* Hovering text box for the 3D glyph elements */}
       <div
@@ -2800,6 +2889,26 @@ export default function KrrobiusScene() {
         <div className="krrobius-tooltip-arrow" />
       </div>
 
+      {/* Button below the strip: ENTER PORTFOLIO */}
+      <div className="krrobius-bottom-cta">
+        <a
+          href="/portfolio"
+          className="krrobius-enter-btn"
+          onClick={(event) => {
+            event.preventDefault();
+
+            startNightTransition(() => {
+              // /portfolio should be the Next.js route that renders StarryNight.jsx.
+              window.location.href = "/portfolio";
+            });
+          }}
+        >
+          <span className="krrobius-enter-dot" />
+          <span className="krrobius-enter-text">ENTER PORTFOLIO</span>
+          <span className="krrobius-enter-arrow">→</span>
+        </a>
+      </div>
+
       <nav className="portfolio-sr-nav" aria-label="Portfolio sections">
         {PORTFOLIO_ITEMS.map((item) => (
           <a
@@ -2809,6 +2918,10 @@ export default function KrrobiusScene() {
                 ? "/portfolio/playground.html"
                 : `#${item.id}`
             }
+            onClick={(event) => {
+              event.preventDefault();
+              navigateToPortfolioItem(item.id);
+            }}
           >
             {item.label}
           </a>

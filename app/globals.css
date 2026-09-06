@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 * {
   box-sizing: border-box;
 }
@@ -130,4 +132,738 @@ canvas.webgl {
   border-right: 5px solid transparent;
   border-top: 5px solid rgba(255, 255, 255, 0.38);
 }
+
+
+/* ==================================================
+   KRROBIUS HEADER (TITLE ABOVE STRIP)
+   ================================================== */
+
+.krrobius-header {
+  position: fixed;
+  top: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.krrobius-title {
+  margin: 0;
+  font-family: "Cinzel", "Space Grotesk", ui-sans-serif, serif;
+  font-size: clamp(30px, 4.2vw, 48px);
+  font-weight: 800;
+  letter-spacing: 0.38em;
+  color: #ffffff;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.76) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 35px rgba(255, 255, 255, 0.35);
+  animation: titleGlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  0% {
+    filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.2));
+  }
+  100% {
+    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.5));
+  }
+}
+
+.krrobius-subtitle {
+  margin: 6px 0 0;
+  font-family: "Space Grotesk", ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  color: rgba(255, 255, 255, 0.42);
+  text-transform: uppercase;
+}
+
+
+/* ==================================================
+   ENTER PORTFOLIO BUTTON (BELOW STRIP)
+   ================================================== */
+
+.krrobius-bottom-cta {
+  position: fixed;
+  bottom: 42px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.krrobius-enter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 30px;
+  background: rgba(6, 8, 16, 0.78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 40px;
+  text-decoration: none;
+  color: #ffffff;
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8),
+              0 0 20px rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.krrobius-enter-btn:hover {
+  background: rgba(16, 22, 38, 0.92);
+  border-color: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9),
+              0 0 28px rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.krrobius-enter-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.krrobius-enter-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+
+.krrobius-enter-text {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+.krrobius-enter-arrow {
+  font-size: 13px;
+  transition: transform 0.22s ease;
+}
+
+.krrobius-enter-btn:hover .krrobius-enter-arrow {
+  transform: translateX(4px);
+}
+
+
+/* ==================================================
+   STARRY NIGHT LIVE PAINTING STYLES
+   ================================================== */
+
+.starry-night-root {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #060914;
+  user-select: none;
+}
+
+.starry-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+  z-index: 1;
+}
+
+.starry-nav-bar {
+  position: fixed;
+  top: 22px;
+  left: 24px;
+  right: 24px;
+  z-index: 30;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  gap: 16px;
+}
+
+.starry-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: rgba(8, 12, 22, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 40px;
+  color: #ffffff;
+  text-decoration: none;
+  font-family: "Space Grotesk", ui-sans-serif, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75);
+  pointer-events: auto;
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.starry-back-btn:hover {
+  background: rgba(18, 24, 42, 0.92);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(255, 255, 255, 0.18);
+  transform: translateX(-3px);
+}
+
+.starry-back-arrow {
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+
+.starry-back-btn:hover .starry-back-arrow {
+  transform: translateX(-3px);
+}
+
+.starry-header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  pointer-events: auto;
+}
+
+.starry-badge {
+  display: inline-block;
+  font-family: "Space Grotesk", monospace, sans-serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #fde047;
+  background: rgba(253, 224, 71, 0.12);
+  border: 1px solid rgba(253, 224, 71, 0.35);
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-bottom: 4px;
+}
+
+.starry-header-title {
+  margin: 0;
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: clamp(16px, 2.2vw, 24px);
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 0 0 24px rgba(254, 240, 138, 0.45);
+}
+
+.starry-header-sub {
+  margin-top: 3px;
+  font-family: "Space Grotesk", monospace;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+
+.starry-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.starry-action-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: rgba(8, 12, 24, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  color: #e2e8f0;
+  font-family: "Space Grotesk", ui-sans-serif, sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.starry-action-pill:hover {
+  background: rgba(18, 28, 50, 0.9);
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.starry-action-pill:active {
+  transform: translateY(0);
+}
+
+.starry-action-pill.active {
+  background: rgba(250, 204, 21, 0.18);
+  border-color: #facc15;
+  color: #fef08a;
+  box-shadow: 0 0 18px rgba(250, 204, 21, 0.3);
+}
+
+.starry-action-pill.highlight {
+  background: rgba(37, 99, 235, 0.25);
+  border-color: rgba(147, 197, 253, 0.6);
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.32);
+}
+
+.starry-action-pill.highlight:hover {
+  background: rgba(37, 99, 235, 0.5);
+  border-color: #93c5fd;
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.5);
+}
+
+.starry-action-icon {
+  font-size: 12px;
+}
+
+/* Constellation Selected Star Card */
+.starry-star-card {
+  position: fixed;
+  bottom: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  width: min(92vw, 440px);
+  padding: 20px 24px;
+  background: rgba(7, 11, 23, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85),
+              0 0 30px rgba(254, 240, 138, 0.15);
+  pointer-events: auto;
+  animation: cardFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.starry-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.starry-card-tag {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #fde047;
+  text-transform: uppercase;
+  background: rgba(253, 224, 71, 0.14);
+  border: 1px solid rgba(253, 224, 71, 0.3);
+  padding: 3px 9px;
+  border-radius: 8px;
+}
+
+.starry-card-coord {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.starry-card-title {
+  margin: 0 0 8px 0;
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
+}
+
+.starry-card-summary {
+  margin: 0 0 12px 0;
+  font-family: "Space Grotesk", ui-sans-serif, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.starry-card-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 8px;
+}
+
+.starry-card-hint {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.42);
+  text-transform: uppercase;
+}
+
+/* Bottom Interaction Guide */
+.starry-bottom-guide {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  pointer-events: none;
+  text-align: center;
+  width: 90%;
+}
+
+.starry-guide-text {
+  margin: 0;
+  font-family: "Space Grotesk", monospace;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: rgba(255, 255, 255, 0.42);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+}
+
+/* Portfolio Slide-Over Dossier Drawer */
+.starry-dossier-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(2, 4, 10, 0.68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: flex-end;
+  animation: drawerOverlay 0.24s ease;
+}
+
+@keyframes drawerOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.starry-dossier-inner {
+  width: min(580px, 100vw);
+  height: 100%;
+  background: rgba(8, 12, 26, 0.97);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: -14px 0 60px rgba(0, 0, 0, 0.92);
+  overflow-y: auto;
+  padding: 38px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  animation: drawerSlide 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes drawerSlide {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.starry-dossier-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 22px;
+}
+
+.starry-dossier-title {
+  margin: 6px 0 3px 0;
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: #ffffff;
+}
+
+.starry-dossier-subtitle {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #93c5fd;
+}
+
+.starry-dossier-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.starry-dossier-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.08);
+}
+
+.starry-dossier-body {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.starry-dossier-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.starry-section-title {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  color: #fde047;
+  text-transform: uppercase;
+}
+
+.starry-dossier-para {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.starry-project-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.starry-project-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 16px 18px;
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.starry-project-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.32);
+  transform: translateY(-2px);
+}
+
+.starry-project-tag {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #60a5fa;
+  text-transform: uppercase;
+}
+
+.starry-project-name {
+  margin: 4px 0 6px 0;
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+}
+
+.starry-project-desc {
+  margin: 0 0 10px 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.starry-project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #fef08a;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.starry-project-link:hover {
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+.starry-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.starry-chips span {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.starry-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.starry-contact-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-decoration: none;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 30px;
+  transition: all 0.2s;
+}
+
+.starry-contact-pill:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.starry-contact-pill.highlight {
+  background: #facc15;
+  color: #060914;
+  border-color: #facc15;
+  font-weight: 800;
+}
+
+.starry-contact-pill.highlight:hover {
+  background: #fde047;
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.5);
+}
+.night-transition {
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  background: #000;
+
+  z-index: 99999;
+
+  overflow: hidden;
+
+  opacity: 1;
+  pointer-events: all;
+
+  animation: nightTransitionIn 300ms ease forwards;
+}
+
+.night-transition-video {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  background: #000;
+}
+
+@keyframes nightTransitionIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .starry-nav-bar {
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    flex-wrap: wrap;
+  }
+  .starry-header-center {
+    order: 3;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .starry-dossier-inner {
+    width: 100vw;
+    padding: 24px 20px;
+  }
+}
+
+
 
