@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPACETIME_3D — Curvature + Photon Bending</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+    }
+
+    #app {
+      position: fixed;
+      inset: 0;
+    }
+
+    .hud {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .title {
+      position: absolute;
+      top: 28px;
+      left: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+    }
+
+    .subtitle {
+      position: absolute;
+      top: 52px;
+      left: 30px;
+      max-width: 560px;
+      color: rgba(255,255,255,0.58);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .panel {
+      position: absolute;
+      right: 28px;
+      bottom: 28px;
+      width: min(340px, calc(100vw - 56px));
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.50);
+      backdrop-filter: blur(16px);
+      padding: 16px 17px;
+      pointer-events: auto;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 90px 1fr 52px;
+      gap: 10px;
+      align-items: center;
+      margin: 11px 0;
+      color: rgba(255,255,255,0.70);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: white;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.20);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font: inherit;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 9px 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: rgba(255,255,255,0.09);
+    }
+
+    button.active {
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.34);
+    }
+
+    .readout {
+      position: absolute;
+      left: 30px;
+      bottom: 28px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.64);
+      pointer-events: none;
+    }
+
+    .help {
+      margin-top: 13px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.46);
+      font-size: 10px;
+      line-height: 1.75;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border: 1px solid rgba(255,255,255,0.16);
+      margin-right: 6px;
+      margin-top: 6px;
+      color: rgba(255,255,255,0.72);
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <div class="hud">
+    <div class="title">SPACETIME_3D</div>
+    <div class="subtitle">
+      3D embedding-diagram style spacetime curvature demo. Turn on launch mode,
+      click-drag on the surface to place and aim a photon, then release to watch
+      the path bend near the mass. This is a visually intuitive approximation,
+      not a full numerical Einstein-equation solver.
+    </div>
+
+    <div class="readout" id="readout"></div>
+
+    <div class="panel">
+      <div class="row">
+        <span>MASS</span>
+        <input id="mass" type="range" min="0.45" max="2.2" step="0.01" value="1.00" />
+        <span id="massValue">1.00</span>
+      </div>
+
+      <div class="row">
+        <span>CURVATURE</span>
+        <input id="depth" type="range" min="0.70" max="2.60" step="0.01" value="1.45" />
+        <span id="depthValue">1.45</span>
+      </div>
+
+      <div class="row">
+        <span>RAY BEND</span>
+        <input id="bend" type="range" min="0.35" max="2.80" step="0.01" value="1.10" />
+        <span id="bendValue">1.10</span>
+      </div>
+
+      <div class="buttons">
+        <button id="launchToggle">LAUNCH MODE: OFF</button>
+        <button id="gridToggle">GRID: ON</button>
+        <button id="clearPhotons">CLEAR PHOTONS</button>
+        <button id="resetView">RESET VIEW</button>
+      </div>
+
+      <div class="help">
+        ORBIT — drag when launch mode is OFF<br>
+        ZOOM — mouse wheel<br>
+        PLACE PHOTON — turn launch mode ON, then click-drag on the grid and release<br>
+        Each photon moves at nearly constant speed while its direction bends toward the mass.
+        Near the photon sphere, carefully aimed rays can loop before escaping or being captured.
+        Captured photons redshift and fade instead of instantly disappearing.
+        The surface is a 3D curvature visualization; the ray-bending dynamics are tuned for intuitive behavior.
+      </div>
+
+      <div style="margin-top:10px;">
+        <span class="badge">event horizon</span>
+        <span class="badge">photon</span>
+        <span class="badge">trajectory trail</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+      "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
+    const root = document.getElementById("app");
+    const readout = document.getElementById("readout");
+
+    const massSlider = document.getElementById("mass");
+    const depthSlider = document.getElementById("depth");
+    const bendSlider = document.getElementById("bend");
+    const massValue = document.getElementById("massValue");
+    const depthValue = document.getElementById("depthValue");
+    const bendValue = document.getElementById("bendValue");
+    const launchToggle = document.getElementById("launchToggle");
+    const gridToggle = document.getElementById("gridToggle");
+    const clearPhotonsButton = document.getElementById("clearPhotons");
+    const resetViewButton = document.getElementById("resetView");
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.setClearColor(0x000000, 1);
+    root.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+      48,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      100
+    );
+    camera.position.set(0, 6.0, 10.5);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.07;
+    controls.target.set(0, -1.0, 0);
+    controls.minDistance = 5;
+    controls.maxDistance = 22;
+    controls.maxPolarAngle = Math.PI * 0.495;
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 0.68);
+    keyLight.position.set(7, 10, 5);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.22);
+    rimLight.position.set(-8, 3, -6);
+    scene.add(rimLight);
+
+    const config = {
+      size: 12,
+      segments: 140,
+      mass: parseFloat(massSlider.value),
+      depth: parseFloat(depthSlider.value),
+      bend: parseFloat(bendSlider.value),
+      softening: 0.55,
+      photonSpeed: 3.0,
+      captureFadeTime: 1.35,
+      showGrid: true
+    };
+
+    let surfaceMesh = null;
+    let gridGroup = null;
+    let horizonRing = null;
+    let photonSphereRing = null;
+    let singularityMesh = null;
+
+    const raycaster = new THREE.Raycaster();
+    const ndc = new THREE.Vector2();
+
+    let launchMode = false;
+    let aiming = false;
+    let aimStart = null;
+    let aimCurrent = null;
+
+    const aimMarker = new THREE.Mesh(
+      new THREE.SphereBufferGeometry(0.08, 16, 16),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.95 })
+    );
+    aimMarker.visible = false;
+    scene.add(aimMarker);
+
+    const aimLineGeometry = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(),
+      new THREE.Vector3()
+    ]);
+    const aimLine = new THREE.Line(
+      aimLineGeometry,
+      new THREE.LineDashedMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.85,
+        dashSize: 0.16,
+        gapSize: 0.08
+      })
+    );
+    aimLine.visible = false;
+    scene.add(aimLine);
+
+    const photons = [];
+
+    function getHorizonRadius() {
+      return 0.38 + config.mass * 0.38;
+    }
+
+    function getPhotonSphereRadius() {
+      return getHorizonRadius() * 1.58;
+    }
+
+    function gravityHeightFromR(r) {
+      const h = -(config.mass * config.depth) / Math.sqrt(r * r + config.softening * config.softening);
+      return Math.max(h, -4.25);
+    }
+
+    function gravityHeight(x, z) {
+      return gravityHeightFromR(Math.sqrt(x * x + z * z));
+    }
+
+    function disposeObject3D(obj) {
+      if (!obj) return;
+      obj.traverse((child) => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) child.material.forEach((m) => m.dispose());
+          else child.material.dispose();
+        }
+      });
+      if (obj.parent) obj.parent.remove(obj);
+    }
+
+    function buildSurface() {
+      if (surfaceMesh) disposeObject3D(surfaceMesh);
+      if (gridGroup) disposeObject3D(gridGroup);
+      if (horizonRing) disposeObject3D(horizonRing);
+      if (photonSphereRing) disposeObject3D(photonSphereRing);
+      if (singularityMesh) disposeObject3D(singularityMesh);
+
+      const geom = new THREE.PlaneBufferGeometry(
+        config.size,
+        config.size,
+        config.segments,
+        config.segments
+      );
+      geom.rotateX(-Math.PI / 2);
+
+      const positions = geom.attributes.position.array;
+      for (let i = 0; i < positions.length; i += 3) {
+        const x = positions[i];
+        const z = positions[i + 2];
+        positions[i + 1] = gravityHeight(x, z);
+      }
+      geom.computeVertexNormals();
+
+      const surfaceMaterial = new THREE.MeshPhongMaterial({
+        color: 0x141414,
+        emissive: 0x020202,
+        shininess: 22,
+        specular: 0x666666,
+        transparent: true,
+        opacity: 0.78,
+        side: THREE.DoubleSide
+      });
+
+      surfaceMesh = new THREE.Mesh(geom, surfaceMaterial);
+      scene.add(surfaceMesh);
+
+      gridGroup = new THREE.Group();
+      const lineMaterial = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: config.showGrid ? 0.30 : 0.0
+      });
+
+      const count = 32;
+      const half = config.size * 0.5;
+
+      for (let i = 0; i <= count; i++) {
+        const t = i / count;
+        const fixed = THREE.MathUtils.lerp(-half, half, t);
+
+        const rowPoints = [];
+        const colPoints = [];
+
+        for (let j = 0; j <= config.segments; j++) {
+          const u = j / config.segments;
+          const varying = THREE.MathUtils.lerp(-half, half, u);
+
+          rowPoints.push(
+            new THREE.Vector3(varying, gravityHeight(varying, fixed) + 0.012, fixed)
+          );
+
+          colPoints.push(
+            new THREE.Vector3(fixed, gravityHeight(fixed, varying) + 0.012, varying)
+          );
+        }
+
+        const row = new THREE.Line(new THREE.BufferGeometry().setFromPoints(rowPoints), lineMaterial);
+        const col = new THREE.Line(new THREE.BufferGeometry().setFromPoints(colPoints), lineMaterial);
+        gridGroup.add(row);
+        gridGroup.add(col);
+      }
+
+      scene.add(gridGroup);
+
+      const horizonR = getHorizonRadius();
+      const photonR = getPhotonSphereRadius();
+
+      horizonRing = new THREE.Mesh(
+        new THREE.RingBufferGeometry(horizonR * 0.88, horizonR, 72),
+        new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.28
+        })
+      );
+      horizonRing.rotation.x = -Math.PI / 2;
+      horizonRing.position.y = gravityHeightFromR(horizonR) + 0.02;
+      scene.add(horizonRing);
+
+      photonSphereRing = new THREE.Mesh(
+        new THREE.RingBufferGeometry(photonR * 0.988, photonR, 88),
+        new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.14
+        })
+      );
+      photonSphereRing.rotation.x = -Math.PI / 2;
+      photonSphereRing.position.y = gravityHeightFromR(photonR) + 0.016;
+      scene.add(photonSphereRing);
+
+      singularityMesh = new THREE.Mesh(
+        new THREE.SphereBufferGeometry(horizonR * 0.48, 24, 24),
+        new THREE.MeshPhongMaterial({
+          color: 0x000000,
+          emissive: 0x020202,
+          specular: 0x777777,
+          shininess: 45
+        })
+      );
+      singularityMesh.position.set(0, gravityHeight(0, 0) + horizonR * 0.40, 0);
+      scene.add(singularityMesh);
+    }
+
+    function setNDCFromEvent(event) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      ndc.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      ndc.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+
+    function surfaceIntersection(event) {
+      setNDCFromEvent(event);
+      raycaster.setFromCamera(ndc, camera);
+      const hits = raycaster.intersectObject(surfaceMesh, false);
+      return hits.length ? hits[0] : null;
+    }
+
+    function updateAimVisuals() {
+      if (!aiming || !aimStart || !aimCurrent) {
+        aimMarker.visible = false;
+        aimLine.visible = false;
+        return;
+      }
+
+      aimMarker.visible = true;
+      aimMarker.position.copy(aimStart);
+
+      const elevatedStart = aimStart.clone();
+      elevatedStart.y += 0.12;
+
+      const elevatedEnd = aimCurrent.clone();
+      elevatedEnd.y += 0.16;
+
+      aimLine.geometry.dispose();
+      aimLine.geometry = new THREE.BufferGeometry().setFromPoints([elevatedStart, elevatedEnd]);
+      aimLine.computeLineDistances();
+      aimLine.visible = true;
+    }
+
+    function clearAim() {
+      aiming = false;
+      aimStart = null;
+      aimCurrent = null;
+      aimMarker.visible = false;
+      aimLine.visible = false;
+    }
+
+    function createPhoton(startPoint, dir3) {
+      const dir2 = new THREE.Vector2(dir3.x, dir3.z);
+      if (dir2.lengthSq() < 0.0001) return;
+
+      dir2.normalize().multiplyScalar(config.photonSpeed);
+
+      const photonMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.98
+      });
+
+      const sphere = new THREE.Mesh(
+        new THREE.SphereBufferGeometry(0.09, 14, 14),
+        photonMaterial
+      );
+
+      const trailMaterial = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.72
+      });
+
+      const trail = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([startPoint.clone()]),
+        trailMaterial
+      );
+
+      scene.add(sphere);
+      scene.add(trail);
+
+      const photon = {
+        x: startPoint.x,
+        z: startPoint.z,
+        vx: dir2.x,
+        vz: dir2.y,
+        mesh: sphere,
+        trail,
+        trailPoints: [],
+        alive: true,
+
+        // Capture / horizon visualization state.
+        captured: false,
+        captureAge: 0,
+        minRadius: Infinity,
+        loops: 0,
+        lastAngle: Math.atan2(startPoint.z, startPoint.x),
+        accumulatedAngle: 0
+      };
+
+      photons.push(photon);
+    }
+
+    function removePhoton(photon) {
+      disposeObject3D(photon.mesh);
+      disposeObject3D(photon.trail);
+      photon.alive = false;
+    }
+
+    function clearPhotons() {
+      for (const photon of photons) {
+        removePhoton(photon);
+      }
+      photons.length = 0;
+    }
+
+    function updatePhotons(dt) {
+      const half = config.size * 0.5;
+      const horizonR = getHorizonRadius();
+      const photonR = getPhotonSphereRadius();
+
+      for (let i = photons.length - 1; i >= 0; i--) {
+        const p = photons[i];
+
+        if (!p.alive) {
+          photons.splice(i, 1);
+          continue;
+        }
+
+        const dx = -p.x;
+        const dz = -p.z;
+        const r2 = dx * dx + dz * dz;
+        const r = Math.sqrt(Math.max(r2, 1e-8));
+
+        p.minRadius = Math.min(p.minRadius, r);
+
+        // ------------------------------------------------------
+        // TRACK ORBITING AROUND THE MASS
+        // ------------------------------------------------------
+        const angle = Math.atan2(p.z, p.x);
+        let dAngle = angle - p.lastAngle;
+
+        if (dAngle > Math.PI) dAngle -= Math.PI * 2;
+        if (dAngle < -Math.PI) dAngle += Math.PI * 2;
+
+        p.accumulatedAngle += dAngle;
+        p.lastAngle = angle;
+        p.loops = Math.abs(p.accumulatedAngle) / (Math.PI * 2);
+
+
+        // ------------------------------------------------------
+        // CAPTURE STATE
+        // ------------------------------------------------------
+        //
+        // Once the ray falls inside the horizon region, do NOT
+        // instantly delete it. Instead it continues inward while
+        // fading and redshifting from the distant-observer view.
+        if (!p.captured && r <= horizonR * 1.02) {
+          p.captured = true;
+          p.captureAge = 0;
+        }
+
+        if (p.captured) {
+          p.captureAge += dt;
+
+          // Pull the photon inward while retaining its tangential
+          // momentum so the last visible segment curls around the hole.
+          const radialLength = Math.max(r, 0.0001);
+          const inwardX = dx / radialLength;
+          const inwardZ = dz / radialLength;
+
+          const tangentX = -p.z / radialLength;
+          const tangentZ = p.x / radialLength;
+
+          const angularSign =
+            Math.sign(p.x * p.vz - p.z * p.vx) || 1;
+
+          const inwardSpeed =
+            config.photonSpeed * (0.48 + 0.42 * Math.min(1, p.captureAge));
+
+          const swirlSpeed =
+            config.photonSpeed *
+            0.78 *
+            Math.exp(-p.captureAge * 1.15);
+
+          p.vx =
+            inwardX * inwardSpeed +
+            tangentX * angularSign * swirlSpeed;
+
+          p.vz =
+            inwardZ * inwardSpeed +
+            tangentZ * angularSign * swirlSpeed;
+
+          p.x += p.vx * dt;
+          p.z += p.vz * dt;
+
+          const newR = Math.sqrt(p.x * p.x + p.z * p.z);
+
+          // Distant-observer style visual fade / redshift.
+          const horizonProximity =
+            THREE.MathUtils.clamp(
+              (newR - horizonR * 0.55) /
+              (horizonR * 0.50),
+              0,
+              1
+            );
+
+          const ageFade =
+            THREE.MathUtils.clamp(
+              1 - p.captureAge / config.captureFadeTime,
+              0,
+              1
+            );
+
+          const visibility =
+            horizonProximity * ageFade;
+
+          // Shift white -> warm red while captured.
+          const redshift =
+            THREE.MathUtils.clamp(
+              p.captureAge / config.captureFadeTime,
+              0,
+              1
+            );
+
+          p.mesh.material.color.setRGB(
+            1.0,
+            THREE.MathUtils.lerp(1.0, 0.20, redshift),
+            THREE.MathUtils.lerp(1.0, 0.07, redshift)
+          );
+
+          p.mesh.material.opacity =
+            0.98 * visibility;
+
+          p.trail.material.opacity =
+            0.72 * Math.max(0.08, visibility);
+
+          p.trail.material.color.setRGB(
+            1.0,
+            THREE.MathUtils.lerp(1.0, 0.26, redshift),
+            THREE.MathUtils.lerp(1.0, 0.10, redshift)
+          );
+
+          const y = gravityHeight(p.x, p.z) + 0.08;
+          p.mesh.position.set(p.x, y, p.z);
+
+          p.trailPoints.push(new THREE.Vector3(p.x, y, p.z));
+          if (p.trailPoints.length > 260) p.trailPoints.shift();
+
+          p.trail.geometry.dispose();
+          p.trail.geometry =
+            new THREE.BufferGeometry().setFromPoints(p.trailPoints);
+
+          if (
+            p.captureAge >= config.captureFadeTime ||
+            newR <= horizonR * 0.48 ||
+            visibility <= 0.005
+          ) {
+            removePhoton(p);
+            photons.splice(i, 1);
+          }
+
+          continue;
+        }
+
+
+        // ------------------------------------------------------
+        // LIGHT BENDING OUTSIDE THE HORIZON
+        // ------------------------------------------------------
+        //
+        // Base inward bending, with an extra critical-region boost
+        // centered around the photon sphere (r ~= 1.5 r_s).
+        //
+        // This is still an interactive visual approximation rather
+        // than a full Schwarzschild null-geodesic integrator.
+        const invR3 =
+          1.0 /
+          Math.max(r2 * r, 0.012);
+
+        const criticalWidth =
+          Math.max(photonR * 0.42, 0.18);
+
+        const criticalOffset =
+          (r - photonR) /
+          criticalWidth;
+
+        const photonSphereBoost =
+          1.0 +
+          3.2 *
+          Math.exp(
+            -criticalOffset *
+            criticalOffset
+          );
+
+        const nearHorizonBoost =
+          1.0 +
+          1.6 *
+          Math.exp(
+            -Math.pow(
+              (r - horizonR * 1.18) /
+              Math.max(horizonR * 0.34, 0.12),
+              2
+            )
+          );
+
+        const a =
+          2.25 *
+          config.mass *
+          config.bend *
+          invR3 *
+          photonSphereBoost *
+          nearHorizonBoost;
+
+        p.vx += dx * a * dt;
+        p.vz += dz * a * dt;
+
+        // Keep coordinate-speed magnitude visually constant.
+        const speed =
+          Math.sqrt(
+            p.vx * p.vx +
+            p.vz * p.vz
+          );
+
+        p.vx =
+          (p.vx / Math.max(speed, 0.0001)) *
+          config.photonSpeed;
+
+        p.vz =
+          (p.vz / Math.max(speed, 0.0001)) *
+          config.photonSpeed;
+
+        p.x += p.vx * dt;
+        p.z += p.vz * dt;
+
+        if (
+          Math.abs(p.x) > half * 1.28 ||
+          Math.abs(p.z) > half * 1.28
+        ) {
+          removePhoton(p);
+          photons.splice(i, 1);
+          continue;
+        }
+
+        const y =
+          gravityHeight(
+            p.x,
+            p.z
+          ) +
+          0.08;
+
+        p.mesh.position.set(
+          p.x,
+          y,
+          p.z
+        );
+
+        p.trailPoints.push(
+          new THREE.Vector3(
+            p.x,
+            y,
+            p.z
+          )
+        );
+
+        if (p.trailPoints.length > 260) {
+          p.trailPoints.shift();
+        }
+
+        p.trail.geometry.dispose();
+        p.trail.geometry =
+          new THREE.BufferGeometry()
+            .setFromPoints(
+              p.trailPoints
+            );
+      }
+    }
+
+    function refreshReadout() {
+      const h0 = gravityHeight(0, 0).toFixed(3);
+      const horizon = getHorizonRadius().toFixed(3);
+      const photonR = getPhotonSphereRadius().toFixed(3);
+
+      const capturedCount =
+        photons.filter((p) => p.captured).length;
+
+      const maxLoops =
+        photons.length
+          ? Math.max(...photons.map((p) => p.loops || 0))
+          : 0;
+
+      readout.innerHTML =
+        `mass&nbsp;&nbsp;${config.mass.toFixed(2)}<br>` +
+        `well depth @ r=0&nbsp;&nbsp;${h0}<br>` +
+        `event horizon radius&nbsp;&nbsp;${horizon}<br>` +
+        `photon sphere radius&nbsp;&nbsp;${photonR}<br>` +
+        `active photons&nbsp;&nbsp;${photons.length}<br>` +
+        `captured&nbsp;&nbsp;${capturedCount}<br>` +
+        `max orbit count&nbsp;&nbsp;${maxLoops.toFixed(2)}`;
+    }
+
+    function updateUIValues() {
+      massValue.textContent = config.mass.toFixed(2);
+      depthValue.textContent = config.depth.toFixed(2);
+      bendValue.textContent = config.bend.toFixed(2);
+    }
+
+    function setLaunchMode(next) {
+      launchMode = next;
+      launchToggle.textContent = `LAUNCH MODE: ${launchMode ? "ON" : "OFF"}`;
+      launchToggle.classList.toggle("active", launchMode);
+      controls.enabled = !launchMode;
+      renderer.domElement.style.cursor = launchMode ? "crosshair" : "grab";
+      clearAim();
+    }
+
+    launchToggle.addEventListener("click", () => {
+      setLaunchMode(!launchMode);
+    });
+
+    gridToggle.addEventListener("click", () => {
+      config.showGrid = !config.showGrid;
+      gridToggle.textContent = `GRID: ${config.showGrid ? "ON" : "OFF"}`;
+      if (gridGroup) {
+        gridGroup.traverse((child) => {
+          if (child.material) child.material.opacity = config.showGrid ? 0.30 : 0.0;
+        });
+      }
+    });
+
+    clearPhotonsButton.addEventListener("click", clearPhotons);
+
+    resetViewButton.addEventListener("click", () => {
+      camera.position.set(0, 6.0, 10.5);
+      controls.target.set(0, -1.0, 0);
+      controls.update();
+    });
+
+    massSlider.addEventListener("input", () => {
+      config.mass = parseFloat(massSlider.value);
+      updateUIValues();
+      buildSurface();
+      refreshReadout();
+    });
+
+    depthSlider.addEventListener("input", () => {
+      config.depth = parseFloat(depthSlider.value);
+      updateUIValues();
+      buildSurface();
+      refreshReadout();
+    });
+
+    bendSlider.addEventListener("input", () => {
+      config.bend = parseFloat(bendSlider.value);
+      updateUIValues();
+      refreshReadout();
+    });
+
+    renderer.domElement.addEventListener("pointerdown", (event) => {
+      if (!launchMode) return;
+
+      const hit = surfaceIntersection(event);
+      if (!hit) return;
+
+      aiming = true;
+      aimStart = hit.point.clone();
+      aimCurrent = hit.point.clone();
+      updateAimVisuals();
+    });
+
+    renderer.domElement.addEventListener("pointermove", (event) => {
+      if (!launchMode || !aiming) return;
+
+      const hit = surfaceIntersection(event);
+      if (hit) {
+        aimCurrent = hit.point.clone();
+      } else {
+        // If the ray misses the mesh during aiming, project onto a horizontal plane
+        setNDCFromEvent(event);
+        raycaster.setFromCamera(ndc, camera);
+        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+        const point = new THREE.Vector3();
+        if (raycaster.ray.intersectPlane(plane, point)) {
+          point.y = gravityHeight(point.x, point.z);
+          aimCurrent = point;
+        }
+      }
+
+      updateAimVisuals();
+    });
+
+    function finishLaunch() {
+      if (!launchMode || !aiming || !aimStart || !aimCurrent) {
+        clearAim();
+        return;
+      }
+
+      const dir = aimCurrent.clone().sub(aimStart);
+      dir.y = 0;
+
+      if (dir.lengthSq() > 0.01) {
+        const spawn = aimStart.clone();
+        spawn.y = gravityHeight(spawn.x, spawn.z) + 0.08;
+        createPhoton(spawn, dir);
+      }
+
+      clearAim();
+      refreshReadout();
+    }
+
+    renderer.domElement.addEventListener("pointerup", finishLaunch);
+    renderer.domElement.addEventListener("pointerleave", () => {
+      if (aiming) finishLaunch();
+    });
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    const clock = new THREE.Clock();
+
+    updateUIValues();
+    buildSurface();
+    refreshReadout();
+    setLaunchMode(false);
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const dt = Math.min(clock.getDelta(), 0.033);
+
+      controls.update();
+      updatePhotons(dt);
+      refreshReadout();
+
+      if (singularityMesh) {
+        singularityMesh.rotation.y += dt * 0.2;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
