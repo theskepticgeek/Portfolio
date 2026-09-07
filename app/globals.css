@@ -17,15 +17,11 @@ body {
   min-height: 100vh;
 }
 
-main,
 .krrobius-root {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-}
-
-.krrobius-root {
   overflow: hidden;
 }
 
@@ -864,6 +860,1254 @@ canvas.webgl {
     padding: 24px 20px;
   }
 }
+
+/* ==================================================
+   MAIN PORTFOLIO PAGE STYLES
+   ================================================== */
+
+.portfolio-main-page {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #020617;
+  font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  color: #ffffff;
+}
+
+/* Background video wrapper (covers entire screen behind everything) */
+.portfolio-bg-wrapper {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: auto;
+  cursor: default;
+}
+
+/* Base video: always softly blurred */
+.portfolio-bg-video-blurred {
+  position: absolute;
+  top: -24px;
+  left: -24px;
+  width: calc(100% + 48px);
+  height: calc(100% + 48px);
+  object-fit: cover;
+  filter: blur(20px) brightness(0.80);
+  transform: scale(1.06);
+  pointer-events: none;
+}
+
+/* Clear unblurred video: reveals sharp video ONLY within a radius of the cursor */
+.portfolio-bg-video-clear {
+  position: absolute;
+  top: -24px;
+  left: -24px;
+  width: calc(100% + 48px);
+  height: calc(100% + 48px);
+  object-fit: cover;
+  filter: blur(0px) brightness(1.02);
+  transform: scale(1.06);
+  pointer-events: none;
+  mask-image: radial-gradient(
+    circle var(--cursor-radius, 0px) at var(--cursor-x, -999px) var(--cursor-y, -999px),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.95) 45%,
+    rgba(0, 0, 0, 0.35) 75%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle var(--cursor-radius, 0px) at var(--cursor-x, -999px) var(--cursor-y, -999px),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.95) 45%,
+    rgba(0, 0, 0, 0.35) 75%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+/* Interactive cursor halo ring indicating the unblur radius */
+.portfolio-cursor-spotlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: calc(var(--cursor-radius, 0px) * 2);
+  height: calc(var(--cursor-radius, 0px) * 2);
+  transform: translate(
+    calc(var(--cursor-x, -999px) - var(--cursor-radius, 0px)),
+    calc(var(--cursor-y, -999px) - var(--cursor-radius, 0px))
+  );
+  border-radius: 50%;
+  border: 1px solid rgba(254, 240, 138, 0.24);
+  box-shadow: 0 0 24px rgba(254, 240, 138, 0.16), inset 0 0 16px rgba(147, 197, 253, 0.1);
+  pointer-events: none;
+  z-index: 2;
+  opacity: var(--cursor-opacity, 0);
+  transition: opacity 0.22s ease;
+}
+
+/* Subtle background guide badge */
+.portfolio-bg-hint {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-family: "Space Grotesk", monospace;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(4, 9, 24, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease;
+}
+
+/* Content layout placed over background: strictly centered horizontally and vertically */
+.portfolio-content-layer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* Top bar with back to Krrobius and status */
+.portfolio-top-bar {
+  width: min(92vw, 1060px);
+  margin: 0 auto 12px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+
+.portfolio-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: rgba(7, 14, 34, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 30px;
+  color: #ffffff;
+  text-decoration: none;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-back-btn:hover {
+  background: rgba(18, 34, 76, 0.94);
+  border-color: #ffffff;
+  transform: translateX(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px rgba(255, 255, 255, 0.2);
+}
+
+.portfolio-top-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(7, 14, 34, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(147, 197, 253, 0.28);
+  border-radius: 30px;
+  color: #93c5fd;
+  font-family: "Space Grotesk", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Centered scrollable container: Starry Night translucent blue background */
+.portfolio-scroll-container {
+  width: min(92vw, 1060px);
+  height: min(85vh, 860px);
+  max-height: calc(100vh - 90px);
+  margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  pointer-events: auto;
+  box-sizing: border-box;
+  background: linear-gradient(
+    140deg,
+    rgba(7, 18, 48, 0.82) 0%,
+    rgba(11, 26, 68, 0.76) 45%,
+    rgba(18, 40, 96, 0.80) 100%
+  );
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(147, 197, 253, 0.32);
+  border-radius: 26px;
+  box-shadow: 0 25px 60px -10px rgba(1, 4, 16, 0.9),
+              0 0 35px rgba(37, 99, 235, 0.22);
+  padding: 38px 42px;
+  color: #ffffff;
+  scroll-behavior: smooth;
+}
+
+/* Custom sleek scrollbar for centered container */
+.portfolio-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+.portfolio-scroll-container::-webkit-scrollbar-track {
+  background: rgba(4, 10, 26, 0.3);
+  border-radius: 10px;
+}
+.portfolio-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(147, 197, 253, 0.32);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.portfolio-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(147, 197, 253, 0.6);
+}
+
+/* Top left corner title: Me, Myself and I */
+.portfolio-hero-title {
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: clamp(28px, 3.5vw, 42px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  margin: 0 0 28px 0;
+  text-shadow: 0 0 26px rgba(255, 255, 255, 0.42);
+  text-transform: uppercase;
+}
+
+/* Hero Section: 2 columns (Left: picture + Who I am + buttons, Right: Socials) */
+.portfolio-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Profile row: Circle picture + Info column */
+.portfolio-profile-row {
+  display: flex;
+  gap: 26px;
+  align-items: flex-start;
+}
+
+/* Circular picture frame */
+.portfolio-photo-frame {
+  width: 140px;
+  height: 140px;
+  min-width: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 25px rgba(254, 240, 138, 0.3),
+              0 12px 30px rgba(0, 0, 0, 0.65);
+  position: relative;
+  background: #000;
+  flex-shrink: 0;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease;
+}
+
+.portfolio-photo-frame:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 35px rgba(254, 240, 138, 0.5),
+              0 16px 36px rgba(0, 0, 0, 0.8);
+}
+
+.portfolio-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Profile Info column */
+.portfolio-profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* White box for "Who I am" */
+.portfolio-white-box {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px 28px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.portfolio-white-box:hover {
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+}
+
+.portfolio-who-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: #09132b;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.01em;
+}
+
+.portfolio-who-desc {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.68;
+  color: #334155;
+  margin: 0;
+  font-weight: 500;
+}
+
+.portfolio-white-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.portfolio-white-pill {
+  background: #f1f5f9;
+  color: #0f172a;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  letter-spacing: 0.04em;
+}
+
+/* Action button row beneath white box */
+.portfolio-btn-group {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.portfolio-btn-primary {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 13px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(147, 197, 253, 0.5);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-btn-primary:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.6);
+  border-color: #ffffff;
+}
+
+.portfolio-btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  font-weight: 700;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 13px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: #ffffff;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+.portfolio-btn-arrow {
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.portfolio-btn-primary:hover .portfolio-btn-arrow {
+  transform: translateY(2px);
+}
+
+.portfolio-btn-secondary:hover .portfolio-btn-arrow {
+  transform: translateX(3px);
+}
+
+/* Right side Social links box */
+.portfolio-social-card {
+  background: rgba(7, 15, 38, 0.68);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(147, 197, 253, 0.28);
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+
+.portfolio-social-label {
+  font-family: "Space Grotesk", monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #93c5fd;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Social link item: borders become bolder and pop out a bit on hover */
+.portfolio-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  position: relative;
+}
+
+.portfolio-social-link:hover {
+  border-width: 2.5px;
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65),
+              0 0 20px rgba(147, 197, 253, 0.4);
+}
+
+.portfolio-social-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.portfolio-social-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+}
+
+.portfolio-social-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.portfolio-social-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+
+.portfolio-social-handle {
+  font-family: "Space Grotesk", monospace;
+  font-size: 9.5px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.portfolio-social-arrow {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.portfolio-social-link:hover .portfolio-social-arrow {
+  color: #ffffff;
+  transform: translate(2px, -2px);
+}
+
+/* Projects Section */
+.portfolio-section-divider {
+  margin-top: 50px;
+  border-top: 1px solid rgba(147, 197, 253, 0.22);
+  padding-top: 36px;
+}
+
+.portfolio-section-head {
+  margin-bottom: 22px;
+}
+
+.portfolio-section-title {
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: clamp(24px, 2.8vw, 32px);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #ffffff;
+  text-transform: uppercase;
+  margin: 0 0 6px 0;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+}
+
+.portfolio-section-sub {
+  font-family: "Space Grotesk", monospace;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: #93c5fd;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.portfolio-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+/* Cards with the same translucent bg */
+.portfolio-project-card {
+  background: linear-gradient(
+    135deg,
+    rgba(8, 20, 52, 0.74) 0%,
+    rgba(13, 29, 68, 0.68) 50%,
+    rgba(18, 38, 88, 0.72) 100%
+  );
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  border-radius: 18px;
+  padding: 28px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5);
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-project-card:hover {
+  border-color: rgba(255, 255, 255, 0.65);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7),
+              0 0 28px rgba(59, 130, 246, 0.32);
+}
+
+.portfolio-card-badge {
+  font-family: "Space Grotesk", monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #fde047;
+  text-transform: uppercase;
+  background: rgba(253, 224, 71, 0.12);
+  border: 1px solid rgba(253, 224, 71, 0.3);
+  padding: 4px 10px;
+  border-radius: 8px;
+  align-self: flex-start;
+}
+
+.portfolio-project-name {
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  margin: 10px 0 6px 0;
+}
+
+.portfolio-project-quote {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #e2e8f0;
+  margin: 0;
+  font-weight: 600;
+}
+
+.portfolio-project-details {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 10px 0 0 0;
+}
+
+.portfolio-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.portfolio-tech-tag {
+  font-family: "Space Grotesk", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #93c5fd;
+  background: rgba(30, 58, 138, 0.35);
+  border: 1px solid rgba(147, 197, 253, 0.28);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* View Repository Box for Projects */
+.portfolio-repo-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  color: #ffffff;
+  text-decoration: none;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 14px;
+  align-self: flex-start;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.portfolio-repo-box:hover {
+  background: #ffffff;
+  color: #0b1329;
+  border-color: #ffffff;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55), 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.portfolio-repo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portfolio-repo-arrow {
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+
+.portfolio-repo-box:hover .portfolio-repo-arrow {
+  transform: translate(2px, -2px);
+}
+
+/* Current Work card */
+.portfolio-current-card {
+  background: linear-gradient(
+    135deg,
+    rgba(8, 20, 52, 0.74) 0%,
+    rgba(13, 29, 68, 0.68) 50%,
+    rgba(18, 38, 88, 0.72) 100%
+  );
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  border-radius: 18px;
+  padding: 28px 30px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5);
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-current-card:hover {
+  border-color: rgba(255, 255, 255, 0.65);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7),
+              0 0 28px rgba(59, 130, 246, 0.32);
+}
+
+/* Portfolio footer */
+.portfolio-footer {
+  margin-top: 48px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Space Grotesk", monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+
+.portfolio-scroll-top {
+  background: none;
+  border: none;
+  color: #93c5fd;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.portfolio-scroll-top:hover {
+  color: #ffffff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .portfolio-hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .portfolio-profile-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .portfolio-white-box {
+    text-align: left;
+  }
+  .portfolio-btn-group {
+    justify-content: center;
+  }
+  .portfolio-scroll-container {
+    padding: 28px 22px;
+  }
+  .portfolio-projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .portfolio-top-bar {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .portfolio-hero-title {
+    font-size: 24px;
+  }
+  .portfolio-photo-frame {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+  }
+  .portfolio-white-box {
+    padding: 18px 20px;
+  }
+  .portfolio-white-title {
+    font-size: 20px;
+  }
+  .portfolio-white-desc {
+    font-size: 14px;
+  }
+}
+
+/* ==================================================
+   NEW EXTENDED PORTFOLIO SECTIONS
+   Research, Experience, Tech Stack, Education, Contact & Footer
+   ================================================== */
+
+/* 1. Research Section */
+.portfolio-research-card {
+  background: linear-gradient(
+    135deg,
+    rgba(9, 22, 58, 0.82) 0%,
+    rgba(14, 32, 78, 0.74) 50%,
+    rgba(20, 44, 102, 0.78) 100%
+  );
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1.5px solid rgba(147, 197, 253, 0.38);
+  border-radius: 20px;
+  padding: 34px 38px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 35px rgba(59, 130, 246, 0.22);
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.portfolio-research-card:hover {
+  border-color: rgba(254, 240, 138, 0.6);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(253, 224, 71, 0.25);
+}
+
+.portfolio-research-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.portfolio-research-springer {
+  font-family: "Space Grotesk", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #93c5fd;
+  text-transform: uppercase;
+}
+
+.portfolio-research-title {
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: clamp(21px, 2.5vw, 27px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  margin: 0 0 16px 0;
+  line-height: 1.35;
+}
+
+.portfolio-research-para {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 0 0 14px 0;
+}
+
+.portfolio-research-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 26px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: 1px solid rgba(191, 219, 254, 0.55);
+  border-radius: 12px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+  margin-top: 18px;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.portfolio-research-cta:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-color: #ffffff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.65), 0 0 20px rgba(147, 197, 253, 0.4);
+}
+
+/* 2. Experience Section */
+.portfolio-experience-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.portfolio-exp-card {
+  background: linear-gradient(
+    135deg,
+    rgba(8, 20, 52, 0.72) 0%,
+    rgba(13, 29, 68, 0.66) 50%,
+    rgba(18, 38, 88, 0.70) 100%
+  );
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(147, 197, 253, 0.28);
+  border-radius: 18px;
+  padding: 26px 30px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5);
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-exp-card:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7), 0 0 26px rgba(59, 130, 246, 0.25);
+}
+
+.portfolio-exp-compact {
+  padding: 22px 26px;
+}
+
+.portfolio-exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.portfolio-exp-title {
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.portfolio-exp-role {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #93c5fd;
+  text-transform: uppercase;
+  margin: 4px 0 12px 0;
+}
+
+.portfolio-exp-desc {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* 3. Tech Stack Dashboard */
+.portfolio-tech-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 18px;
+}
+
+.portfolio-tech-card {
+  background: rgba(7, 16, 42, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(147, 197, 253, 0.22);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.portfolio-tech-card:hover {
+  border-color: rgba(147, 197, 253, 0.55);
+  background: rgba(10, 22, 56, 0.82);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.portfolio-tech-cat-header {
+  font-family: "Space Grotesk", monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #93c5fd;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.portfolio-tech-cat-header::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #60a5fa;
+  box-shadow: 0 0 8px #60a5fa;
+}
+
+.portfolio-tech-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.portfolio-tech-pill-item {
+  font-family: "Space Grotesk", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 5px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.portfolio-tech-pill-item:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+/* 4. Education Card */
+.portfolio-education-card {
+  background: linear-gradient(
+    135deg,
+    rgba(8, 20, 52, 0.74) 0%,
+    rgba(13, 29, 68, 0.68) 50%,
+    rgba(18, 38, 88, 0.72) 100%
+  );
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  border-radius: 18px;
+  padding: 28px 32px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5);
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-education-card:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7), 0 0 26px rgba(59, 130, 246, 0.25);
+}
+
+.portfolio-edu-inst {
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+}
+
+.portfolio-edu-degree {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #93c5fd;
+  margin: 0 0 6px 0;
+}
+
+.portfolio-edu-loc {
+  font-family: "Space Grotesk", monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  margin: 0 0 14px 0;
+}
+
+.portfolio-edu-desc {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 16px 0;
+}
+
+/* 5. Contact Section */
+.portfolio-contact-card {
+  background: linear-gradient(
+    135deg,
+    rgba(9, 22, 60, 0.88) 0%,
+    rgba(15, 34, 86, 0.82) 50%,
+    rgba(22, 48, 115, 0.85) 100%
+  );
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1.5px solid rgba(147, 197, 253, 0.45);
+  border-radius: 22px;
+  padding: 38px 42px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(59, 130, 246, 0.28);
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+}
+
+.portfolio-contact-card:hover {
+  border-color: rgba(254, 240, 138, 0.6);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.85), 0 0 50px rgba(253, 224, 71, 0.25);
+}
+
+.portfolio-contact-heading {
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  margin: 12px 0 16px 0;
+  line-height: 1.3;
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.35);
+}
+
+.portfolio-contact-body {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 780px;
+  margin: 0 0 26px 0;
+}
+
+.portfolio-contact-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 30px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.55);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+
+.portfolio-contact-cta:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 14px 40px rgba(37, 99, 235, 0.75), 0 0 25px rgba(255, 255, 255, 0.4);
+}
+
+.portfolio-contact-socials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(147, 197, 253, 0.2);
+}
+
+/* 6. Redesigned Footer */
+.portfolio-footer-redesign {
+  margin-top: 64px;
+  border-top: 1px solid rgba(147, 197, 253, 0.22);
+  padding-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+}
+
+.portfolio-footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.portfolio-footer-name {
+  font-family: "Cinzel", "Space Grotesk", serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+}
+
+.portfolio-footer-subtitle {
+  font-family: "Space Grotesk", monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: #93c5fd;
+  text-transform: uppercase;
+}
+
+.portfolio-footer-center {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  text-align: center;
+}
+
+.portfolio-footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.portfolio-footer-copy {
+  font-family: "Space Grotesk", monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 820px) {
+  .portfolio-footer-redesign {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 16px;
+  }
+  .portfolio-footer-right {
+    align-items: center;
+  }
+  .portfolio-contact-card {
+    padding: 28px 24px;
+  }
+  .portfolio-research-card {
+    padding: 26px 22px;
+  }
+}
+
+
 
 
 

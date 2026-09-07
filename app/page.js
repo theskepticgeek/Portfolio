@@ -2,7 +2,7 @@ import KrrobiusScene from "@/components/KrrobiusScene";
 
 export default function Home() {
   return (
-    <main>
+    <main className="krrobius-root">
       <KrrobiusScene />
     </main>
   );

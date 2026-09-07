@@ -36,6 +36,7 @@ export default function KrrobiusScene() {
   const [nightTransitionVisible, setNightTransitionVisible] = useState(false);
   const transitionActiveRef = useRef(false);
   const pendingNavigationRef = useRef(null);
+  const transitionVideoRef = useRef(null);
 
   const startNightTransition = (navigationAction) => {
     if (transitionActiveRef.current) return;
@@ -50,14 +51,48 @@ export default function KrrobiusScene() {
     pendingNavigationRef.current = null;
 
     if (navigationAction) {
+      // Execute the navigation.
+      // IMPORTANT: We DO NOT call setNightTransitionVisible(false) here!
+      // When navigating to /portfolio, the browser takes a moment to load the page.
+      // Keeping the overlay visible guarantees that the Krrobius scene never glimpses through.
       navigationAction();
+      return;
     }
 
-    // If the action performs a full page navigation, the page will unload.
-    // If it only changes a hash / dispatches an event, remove the overlay here.
     transitionActiveRef.current = false;
     setNightTransitionVisible(false);
   };
+
+  // Ensure unmuted audio playback when the loading transition appears
+  useEffect(() => {
+    if (nightTransitionVisible) {
+      const handleKeyDown = (e) => {
+        if (e.key === "Escape" || e.key === " ") {
+          finishNightTransition();
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+
+      if (transitionVideoRef.current) {
+        const vid = transitionVideoRef.current;
+        vid.currentTime = 0;
+        vid.muted = false;
+        vid.volume = 1.0;
+        const playPromise = vid.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn("Unmuted autoplay restricted by browser policy; trying muted:", err);
+            vid.muted = true;
+            vid.play().catch((e) => console.error("Video play error:", e));
+          });
+        }
+      }
+
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [nightTransitionVisible]);
 
   const navigateToPortfolioItem = (targetId) => {
     startNightTransition(() => {
@@ -2849,9 +2884,9 @@ export default function KrrobiusScene() {
           }}
         >
           <video
+            ref={transitionVideoRef}
             src="/night.mp4"
             autoPlay
-            muted
             playsInline
             preload="auto"
             onEnded={finishNightTransition}
@@ -2865,6 +2900,46 @@ export default function KrrobiusScene() {
               background: "#000",
             }}
           />
+
+          {/* Audio Indicator & Skip Button Header */}
+          <div
+            style={{
+              position: "absolute",
+              top: "24px",
+              left: "24px",
+              right: "24px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              zIndex: 10,
+              pointerEvents: "none",
+            }}
+          >
+            
+
+            <button
+              onClick={finishNightTransition}
+              style={{
+                pointerEvents: "auto",
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: "11px",
+                fontWeight: 700,
+                letterSpacing: "0.18em",
+                color: "#ffffff",
+                background: "rgba(10, 16, 32, 0.8)",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                border: "1px solid rgba(255, 255, 255, 0.35)",
+                padding: "9px 20px",
+                borderRadius: "24px",
+                cursor: "pointer",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.6)",
+                transition: "all 0.2s ease",
+              }}
+            >
+              SKIP INTRO →
+            </button>
+          </div>
         </div>
       )}
 
