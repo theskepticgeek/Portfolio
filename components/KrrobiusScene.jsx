@@ -96,24 +96,17 @@ export default function KrrobiusScene() {
   }, [nightTransitionVisible]);
 
   const navigateToPortfolioItem = (targetId) => {
-    startNightTransition(() => {
-      if (targetId === "playground") {
-        window.location.href = "/portfolio/playground.html";
-        return;
-      }
+  // Playground remains its own standalone page
+  if (targetId === "playground") {
+    window.location.href = "/portfolio/playground.html";
+    return;
+  }
 
-      // Preserve your existing navigation behavior for the other sections.
-      // If another component listens for "krrobius:navigate", it will now
-      // receive the event AFTER night.mp4 has finished.
-      window.location.hash = targetId;
-
-      window.dispatchEvent(
-        new CustomEvent("krrobius:navigate", {
-          detail: { id: targetId },
-        })
-      );
-    });
-  };
+  // Send the requested portfolio section as a query parameter.
+  // Using ?section= instead of # prevents the browser from instantly
+  // jumping to the section before our smooth-scroll animation runs.
+  window.location.href = `/portfolio?section=${encodeURIComponent(targetId)}`;
+};
 
   useEffect(() => {
     const rootElement = rootRef.current;
@@ -2906,24 +2899,27 @@ export default function KrrobiusScene() {
   </a>
 </div>
 
-      <nav className="portfolio-sr-nav" aria-label="Portfolio sections">
-        {PORTFOLIO_ITEMS.map((item) => (
-          <a
-            key={item.id}
-            href={
-              item.id === "playground"
-                ? "/portfolio/playground.html"
-                : `#${item.id}`
-            }
-            onClick={(event) => {
-              event.preventDefault();
-              navigateToPortfolioItem(item.id);
-            }}
-          >
-            {item.label}
-          </a>
-        ))}
-      </nav>
+      <nav
+  className="portfolio-sr-nav"
+  aria-label="Portfolio sections"
+>
+  {PORTFOLIO_ITEMS.map((item) => (
+    <a
+      key={item.id}
+      href={
+        item.id === "playground"
+          ? "/portfolio/playground.html"
+          : `/portfolio?section=${encodeURIComponent(item.id)}`
+      }
+      onClick={(event) => {
+        event.preventDefault();
+        navigateToPortfolioItem(item.id);
+      }}
+    >
+      {item.label}
+    </a>
+  ))}
+</nav>
     </div>
   );
 }

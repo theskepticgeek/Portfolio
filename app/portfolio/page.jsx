@@ -54,6 +54,60 @@ export default function PortfolioPage() {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
+  // ======================================================
+// INCOMING GLYPH NAVIGATION
+// ======================================================
+//
+// Example:
+// /portfolio?section=current-work
+//
+// Portfolio first opens at the top, then smoothly
+// scrolls down to the requested section.
+//
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const targetSection = params.get("section");
+
+  if (!targetSection) return;
+
+  const container = scrollContainerRef.current;
+
+  if (!container) return;
+
+  // Always begin from the very top.
+  container.scrollTop = 0;
+
+  // Give the portfolio and WebGL background a moment to mount
+  // before beginning the visible smooth scroll.
+  const timer = window.setTimeout(() => {
+    const target = document.getElementById(targetSection);
+
+    if (!target) {
+      console.warn(
+        `Portfolio section "${targetSection}" does not exist.`
+      );
+      return;
+    }
+
+    const containerTop =
+      container.getBoundingClientRect().top;
+
+    const targetTop =
+      target.getBoundingClientRect().top;
+
+    const offset =
+      targetTop -
+      containerTop +
+      container.scrollTop;
+
+    container.scrollTo({
+      top: offset,
+      behavior: "smooth",
+    });
+  }, 350);
+
+  return () => window.clearTimeout(timer);
+}, []);
 
   const scrollToTop = () => {
     if (scrollContainerRef.current) {
@@ -122,7 +176,7 @@ export default function PortfolioPage() {
           <h1 className="portfolio-hero-title">Me, Myself and I</h1>
 
           {/* Hero Section Grid */}
-          <section className="portfolio-hero-grid" aria-label="Introduction and Social Links">
+          <section id="about" className="portfolio-hero-grid" aria-label="Introduction and Social Links">
             {/* Left Column: Picture + White Who I am Box + Buttons */}
             <div className="portfolio-profile-row">
               {/* Profile Picture in Circle Frame */}
