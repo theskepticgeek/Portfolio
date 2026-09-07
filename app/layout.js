@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "Krrobius Strip",
-  description: "Interactive portfolio of Krrish Dubey",
+  description: "Where Euclid meets Van Gogh",
 };
 
 export default function RootLayout({ children }) {
