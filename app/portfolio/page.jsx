@@ -1,112 +1,56 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect } from "react";
 import Link from "next/link";
+import StarryNightAnimated from "@/components/StarryNightAnimated";
 
 export default function PortfolioPage() {
-  const [isAudioActive, setIsAudioActive] = useState(true);
-  const blurVideoRef = useRef(null);
-  const clearVideoRef = useRef(null);
   const bgWrapperRef = useRef(null);
   const scrollContainerRef = useRef(null);
 
-  // Audio always on management
-  const playAudio = useCallback(() => {
-    const clearVid = clearVideoRef.current;
-    if (!clearVid) return;
-
-    clearVid.muted = false;
-    clearVid.volume = 0.85;
-
-    const playPromise = clearVid.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          setIsAudioActive(true);
-        })
-        .catch((err) => {
-          console.warn("Unmuted autoplay awaiting first user gesture:", err);
-          setIsAudioActive(false);
-        });
-    }
-  }, []);
-
-  const toggleAudio = () => {
-    const clearVid = clearVideoRef.current;
-    if (!clearVid) return;
-
-    if (isAudioActive) {
-      clearVid.muted = true;
-      setIsAudioActive(false);
-    } else {
-      clearVid.muted = false;
-      clearVid.volume = 0.85;
-      clearVid
-        .play()
-        .then(() => setIsAudioActive(true))
-        .catch((e) => console.warn("Toggle audio error:", e));
-    }
-  };
-
-  // Sync the blurred and clear videos so they remain in exact lockstep
-  const handleTimeUpdate = () => {
-    if (blurVideoRef.current && clearVideoRef.current) {
-      const diff = Math.abs(
-        blurVideoRef.current.currentTime - clearVideoRef.current.currentTime
-      );
-      if (diff > 0.2) {
-        clearVideoRef.current.currentTime = blurVideoRef.current.currentTime;
-      }
-    }
-  };
-
+  // Track the cursor globally so the animated Starry Night can stay blurred
+  // everywhere except for the soft clear reveal around the pointer.
   useEffect(() => {
-    // Attempt playback with audio on load
-    playAudio();
+    const handlePointerMove = (event) => {
+      const wrapper = bgWrapperRef.current;
+      if (!wrapper) return;
 
-    // Fallback: If the browser policy requires any user interaction to unmute,
-    // listen once to any click or key to immediately unmute
-    const resumeAudioOnGesture = () => {
-      playAudio();
-      window.removeEventListener("pointerdown", resumeAudioOnGesture);
-      window.removeEventListener("keydown", resumeAudioOnGesture);
-    };
-
-    window.addEventListener("pointerdown", resumeAudioOnGesture, { once: true });
-    window.addEventListener("keydown", resumeAudioOnGesture, { once: true });
-
-    // Localized cursor unblur radius tracking
-    const handlePointerMove = (e) => {
-      if (!bgWrapperRef.current) return;
-      const x = e.clientX;
-      const y = e.clientY;
-      bgWrapperRef.current.style.setProperty("--cursor-x", `${x}px`);
-      bgWrapperRef.current.style.setProperty("--cursor-y", `${y}px`);
-      bgWrapperRef.current.style.setProperty("--cursor-radius", "175px");
-      bgWrapperRef.current.style.setProperty("--cursor-opacity", "1");
+      wrapper.style.setProperty("--cursor-x", `${event.clientX}px`);
+      wrapper.style.setProperty("--cursor-y", `${event.clientY}px`);
+      wrapper.style.setProperty("--cursor-radius", "175px");
+      wrapper.style.setProperty("--cursor-opacity", "1");
     };
 
     const handlePointerLeave = () => {
-      if (!bgWrapperRef.current) return;
-      bgWrapperRef.current.style.setProperty("--cursor-radius", "0px");
-      bgWrapperRef.current.style.setProperty("--cursor-opacity", "0");
+      const wrapper = bgWrapperRef.current;
+      if (!wrapper) return;
+
+      wrapper.style.setProperty("--cursor-radius", "0px");
+      wrapper.style.setProperty("--cursor-opacity", "0");
     };
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", handlePointerLeave);
 
     return () => {
-      window.removeEventListener("pointerdown", resumeAudioOnGesture);
-      window.removeEventListener("keydown", resumeAudioOnGesture);
       window.removeEventListener("pointermove", handlePointerMove);
-      document.documentElement.removeEventListener("pointerleave", handlePointerLeave);
+      document.documentElement.removeEventListener(
+        "pointerleave",
+        handlePointerLeave
+      );
     };
-  }, [playAudio]);
+  }, []);
 
   // Smooth scroll helpers for internal navigation
   const scrollToSection = (sectionId) => {
+    const container = scrollContainerRef.current;
     const target = document.getElementById(sectionId);
-    if (target) {
+    if (target && container) {
+      const containerTop = container.getBoundingClientRect().top;
+      const targetTop = target.getBoundingClientRect().top;
+      const offset = targetTop - containerTop + container.scrollTop;
+      container.scrollTo({ top: offset, behavior: "smooth" });
+    } else if (target) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
@@ -120,46 +64,38 @@ export default function PortfolioPage() {
   return (
     <div className="portfolio-main-page">
       {/* ==================================================================
-          BACKGROUND VIDEO LAYERS: night.mp4
-          1. Base video: blurred at all times
-          2. Clear video: reveals sharp video ONLY in a localized cursor radius
-          ================================================================== */}
-      <div
-        ref={bgWrapperRef}
-        className="portfolio-bg-wrapper"
-        aria-label="Interactive Van Gogh Starry Night background"
-      >
-        {/* Layer 1: Base softly-blurred video */}
-        <video
-          ref={blurVideoRef}
-          src="/night.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          onTimeUpdate={handleTimeUpdate}
-          className="portfolio-bg-video-blurred"
-        />
+    ANIMATED STARRY NIGHT BACKGROUND
+    Layer 1 = permanently blurred
+    Layer 2 = sharp and revealed around cursor
+    ================================================================== */}
+<div
+  ref={bgWrapperRef}
+  className="portfolio-bg-wrapper"
+  aria-label="Interactive animated Van Gogh Starry Night background"
+>
+  {/* BLURRED BACKGROUND */}
+  <div className="portfolio-starry-layer portfolio-starry-blurred">
+    <StarryNightAnimated
+      intensity={1.4}
+      speed={2}
+    />
+  </div>
 
-        {/* Layer 2: Clear video revealed strictly around the cursor radius */}
-        <video
-          ref={clearVideoRef}
-          src="/night.mp4"
-          autoPlay
-          loop
-          playsInline
-          preload="auto"
-          className="portfolio-bg-video-clear"
-        />
+  {/* SHARP BACKGROUND — only visible inside cursor radius */}
+  <div className="portfolio-starry-layer portfolio-starry-clear">
+    <StarryNightAnimated
+      intensity={1.4}
+      speed={2}
+    />
+  </div>
 
-        {/* Interactive halo ring marking the spotlight radius */}
-        <div className="portfolio-cursor-spotlight" aria-hidden="true" />
-
-        <div className="portfolio-bg-hint" aria-hidden="true">
-          ✦ Move cursor across sky to unblur localized lens
-        </div>
-      </div>
+  {/* Cursor radius ring */}
+  <div
+    className="portfolio-cursor-spotlight"
+    aria-hidden="true"
+  />
+</div>
+     
 
       {/* ==================================================================
           MAIN CONTENT LAYER: Strictly centered horizontally & vertically
@@ -213,7 +149,7 @@ export default function PortfolioPage() {
 
                   <div className="portfolio-white-pills">
                     <span className="portfolio-white-pill">⚡ DeFi Protocols</span>
-                    <span className="portfolio-white-pill">🌐 Web3 & Blockchain</span>
+                    <span className="portfolio-white-pill">🌐 Web3 &amp; Blockchain</span>
                     <span className="portfolio-white-pill">📈 Quant Finance</span>
                     <span className="portfolio-white-pill">🌱 Sustainability</span>
                     <span className="portfolio-white-pill">🎓 B.Tech CS</span>
@@ -464,7 +400,7 @@ export default function PortfolioPage() {
           <section
             id="current-work"
             className="portfolio-section-divider"
-            aria-label="Current Work & Research"
+            aria-label="Current Work &amp; Research"
           >
             <div className="portfolio-section-head">
               <h3 className="portfolio-section-title">Current Work</h3>
@@ -501,7 +437,7 @@ export default function PortfolioPage() {
               ================================================================== */}
           <section
             id="research"
-            className="portfolio-section-divider"
+            className="portfolio-section-divider portfolio-section-research"
             aria-label="Published Research"
           >
             <div className="portfolio-section-head">
@@ -569,7 +505,7 @@ export default function PortfolioPage() {
               ================================================================== */}
           <section
             id="experience"
-            className="portfolio-section-divider"
+            className="portfolio-section-divider portfolio-section-experience"
             aria-label="Experience"
           >
             <div className="portfolio-section-head">
@@ -580,8 +516,8 @@ export default function PortfolioPage() {
             </div>
 
             <div className="portfolio-experience-list">
-              {/* Experience 1: HoloRecruit */}
-              <article className="portfolio-exp-card">
+              {/* Experience 1: HoloRecruit — most prominent */}
+              <article className="portfolio-exp-card portfolio-exp-primary">
                 <div className="portfolio-exp-header">
                   <div>
                     <h4 className="portfolio-exp-title">HoloRecruit</h4>
@@ -637,7 +573,7 @@ export default function PortfolioPage() {
                 </div>
               </article>
 
-              {/* Experience 3: Research Paper Review & Technical Research */}
+              {/* Experience 3: Research Paper Review — slightly smaller / compact */}
               <article className="portfolio-exp-card portfolio-exp-compact">
                 <div className="portfolio-exp-header">
                   <div>
@@ -664,7 +600,7 @@ export default function PortfolioPage() {
               ================================================================== */}
           <section
             id="tech-stack"
-            className="portfolio-section-divider"
+            className="portfolio-section-divider portfolio-section-techstack"
             aria-label="Tech Stack"
           >
             <div className="portfolio-section-head">
@@ -753,7 +689,7 @@ export default function PortfolioPage() {
               ================================================================== */}
           <section
             id="education"
-            className="portfolio-section-divider"
+            className="portfolio-section-divider portfolio-section-education"
             aria-label="Education"
           >
             <div className="portfolio-section-head">
@@ -764,11 +700,18 @@ export default function PortfolioPage() {
             </div>
 
             <article className="portfolio-education-card">
-              <h4 className="portfolio-edu-inst">JIS College of Engineering</h4>
-              <p className="portfolio-edu-degree">
-                B.Tech in Computer Science and Technology
-              </p>
-              <p className="portfolio-edu-loc">Kalyani, West Bengal, India</p>
+              <div className="portfolio-edu-header-row">
+                <div>
+                  <h4 className="portfolio-edu-inst">JIS College of Engineering</h4>
+                  <p className="portfolio-edu-degree">
+                    B.Tech in Computer Science and Technology
+                  </p>
+                  <p className="portfolio-edu-loc">Kalyani, West Bengal, India</p>
+                </div>
+                <span className="portfolio-card-badge" style={{ alignSelf: "flex-start", whiteSpace: "nowrap" }}>
+                  B.TECH // CS
+                </span>
+              </div>
 
               <p className="portfolio-edu-desc">
                 My academic work in computer science forms the foundation for my broader
@@ -793,7 +736,7 @@ export default function PortfolioPage() {
               ================================================================== */}
           <section
             id="contact"
-            className="portfolio-section-divider"
+            className="portfolio-section-divider portfolio-section-contact"
             aria-label="Contact"
           >
             <div className="portfolio-contact-card">

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import Link from "next/link";
 
 // The strip has 54 longitudinal divisions and 10 width divisions.
 // Setting track to 0 centers every element directly on the central
@@ -2869,86 +2870,15 @@ export default function KrrobiusScene() {
 
           The destination is opened only after this video ends.
          ===================================================== */}
-      {nightTransitionVisible && (
-        <div
-          className="krrobius-night-transition"
-          style={{
-            position: "fixed",
-            inset: 0,
-            width: "100vw",
-            height: "100vh",
-            zIndex: 999999,
-            background: "#000",
-            overflow: "hidden",
-            pointerEvents: "all",
-          }}
-        >
-          <video
-            ref={transitionVideoRef}
-            src="/night.mp4"
-            autoPlay
-            playsInline
-            preload="auto"
-            onEnded={finishNightTransition}
-            onError={finishNightTransition}
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              background: "#000",
-            }}
-          />
-
-          {/* Audio Indicator & Skip Button Header */}
-          <div
-            style={{
-              position: "absolute",
-              top: "24px",
-              left: "24px",
-              right: "24px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              zIndex: 10,
-              pointerEvents: "none",
-            }}
-          >
-            
-
-            <button
-              onClick={finishNightTransition}
-              style={{
-                pointerEvents: "auto",
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "11px",
-                fontWeight: 700,
-                letterSpacing: "0.18em",
-                color: "#ffffff",
-                background: "rgba(10, 16, 32, 0.8)",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
-                border: "1px solid rgba(255, 255, 255, 0.35)",
-                padding: "9px 20px",
-                borderRadius: "24px",
-                cursor: "pointer",
-                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.6)",
-                transition: "all 0.2s ease",
-              }}
-            >
-              SKIP INTRO →
-            </button>
-          </div>
-        </div>
-      )}
+      
+      )
 
       <canvas ref={bgCanvasRef} id="bgCanvas" aria-hidden="true" />
 
       {/* Title above the strip: KRROBIUS */}
       <header className="krrobius-header">
         <h1 className="krrobius-title">KRROBIUS</h1>
-        <p className="krrobius-subtitle">TOPOLOGICAL MANIFOLD // PORTFOLIO</p>
+
       </header>
 
       {/* Hovering text box for the 3D glyph elements */}
@@ -2965,24 +2895,16 @@ export default function KrrobiusScene() {
       </div>
 
       {/* Button below the strip: ENTER PORTFOLIO */}
-      <div className="krrobius-bottom-cta">
-        <a
-          href="/portfolio"
-          className="krrobius-enter-btn"
-          onClick={(event) => {
-            event.preventDefault();
-
-            startNightTransition(() => {
-              // /portfolio should be the Next.js route that renders StarryNight.jsx.
-              window.location.href = "/portfolio";
-            });
-          }}
-        >
-          <span className="krrobius-enter-dot" />
-          <span className="krrobius-enter-text">ENTER PORTFOLIO</span>
-          <span className="krrobius-enter-arrow">→</span>
-        </a>
-      </div>
+<div className="krrobius-bottom-cta">
+  <a
+    href="/starry-night"
+    className="krrobius-enter-btn"
+  >
+    <span className="krrobius-enter-dot" />
+    <span className="krrobius-enter-text">ENTER PORTFOLIO</span>
+    <span className="krrobius-enter-arrow">→</span>
+  </a>
+</div>
 
       <nav className="portfolio-sr-nav" aria-label="Portfolio sections">
         {PORTFOLIO_ITEMS.map((item) => (
