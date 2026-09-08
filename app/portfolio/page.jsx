@@ -198,7 +198,7 @@ useEffect(() => {
       </div>
       {/* Name / Playground Link */}
 <a
-  href="/portfolio/playground.html"
+  href="/starry-night?target=playground"
   className="portfolio-profile-name"
   title="Enter Playground"
 >
