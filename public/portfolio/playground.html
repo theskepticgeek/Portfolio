@@ -198,16 +198,155 @@
     }
 
     @media (max-width: 720px) {
+      html,
+      body,
+      #app,
+      .hud {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+      }
+
+      body {
+        overscroll-behavior: none;
+      }
+
+      #app canvas {
+        display: block;
+        width: 100% !important;
+        height: 100% !important;
+        touch-action: none;
+      }
+
       .playground-nav {
-        top: 18px;
-        right: 16px;
-        gap: 7px;
+        top: max(10px, env(safe-area-inset-top));
+        right: 10px;
+        gap: 6px;
       }
 
       .playground-nav-link {
-        padding: 8px 11px;
+        padding: 7px 9px;
+        font-size: 8.5px;
+        letter-spacing: 0.08em;
+        min-height: 34px;
+      }
+
+      .playground-nav-arrow {
+        font-size: 10px;
+      }
+
+      .title {
+        top: calc(max(10px, env(safe-area-inset-top)) + 46px);
+        left: 14px;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+      }
+
+      /* The long explanation competes with the canvas on a phone. */
+      .subtitle {
+        display: none;
+      }
+
+      .readout {
+        top: calc(max(10px, env(safe-area-inset-top)) + 70px);
+        bottom: auto;
+        left: 14px;
+        right: 14px;
+        max-width: 230px;
         font-size: 9px;
-        letter-spacing: 0.10em;
+        line-height: 1.55;
+        color: rgba(255,255,255,0.56);
+      }
+
+      /* Bottom-sheet style controls. */
+      .panel {
+        left: 8px;
+        right: 8px;
+        bottom: max(8px, env(safe-area-inset-bottom));
+        width: auto;
+        max-height: 43dvh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 12px;
+        border-radius: 14px;
+        background: rgba(0,0,0,0.66);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        scrollbar-width: none;
+      }
+
+      .panel::-webkit-scrollbar {
+        display: none;
+      }
+
+      .row {
+        grid-template-columns: 72px minmax(0, 1fr) 38px;
+        gap: 7px;
+        margin: 7px 0;
+        font-size: 9.5px;
+        letter-spacing: 0.05em;
+      }
+
+      input[type="range"] {
+        min-width: 0;
+        min-height: 30px;
+      }
+
+      .buttons {
+        gap: 7px;
+        margin-top: 9px;
+      }
+
+      button {
+        min-height: 42px;
+        padding: 8px 7px;
+        font-size: 9px;
+        letter-spacing: 0.05em;
+      }
+
+      /* Keep the phone panel compact; desktop still shows the instructions. */
+      .help {
+        display: none;
+      }
+
+      .badge {
+        font-size: 8.5px;
+        padding: 3px 5px;
+        margin-top: 5px;
+        margin-right: 4px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .playground-nav-link {
+        padding: 7px 8px;
+        font-size: 8px;
+      }
+
+      .readout {
+        max-width: 205px;
+        font-size: 8.5px;
+      }
+
+      .panel {
+        max-height: 45dvh;
+      }
+    }
+
+    @media (max-width: 720px) and (max-height: 650px) {
+      .readout {
+        display: none;
+      }
+
+      .panel {
+        max-height: 48dvh;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      .playground-nav-link:hover,
+      button:hover {
+        transform: none;
       }
     }
 
@@ -310,22 +449,67 @@
     const clearPhotonsButton = document.getElementById("clearPhotons");
     const resetViewButton = document.getElementById("resetView");
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    const MOBILE_QUERY = window.matchMedia(
+      "(max-width: 768px), (pointer: coarse)"
+    );
+
+    const isMobileDevice = () => MOBILE_QUERY.matches;
+
+    function getViewportSize() {
+      const viewport = window.visualViewport;
+
+      return {
+        width: Math.max(
+          1,
+          Math.round(viewport?.width || window.innerWidth)
+        ),
+        height: Math.max(
+          1,
+          Math.round(viewport?.height || window.innerHeight)
+        )
+      };
+    }
+
+    function getPixelRatioCap() {
+      // High DPR is expensive on phones and does not materially improve
+      // this dark line-based scene beyond ~1.25x.
+      return isMobileDevice() ? 1.25 : 1.7;
+    }
+
+    const initialViewport = getViewportSize();
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: !isMobileDevice(),
+      alpha: false,
+      powerPreference: "high-performance"
+    });
+
+    renderer.setPixelRatio(
+      Math.min(
+        window.devicePixelRatio || 1,
+        getPixelRatioCap()
+      )
+    );
+
+    renderer.setSize(
+      initialViewport.width,
+      initialViewport.height,
+      false
+    );
+
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.setClearColor(0x000000, 1);
+    renderer.domElement.style.touchAction = "none";
     root.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(
       48,
-      window.innerWidth / window.innerHeight,
+      initialViewport.width / initialViewport.height,
       0.1,
       100
     );
-    camera.position.set(0, 6.0, 10.5);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -334,6 +518,52 @@
     controls.minDistance = 5;
     controls.maxDistance = 22;
     controls.maxPolarAngle = Math.PI * 0.495;
+
+    function applyDefaultView() {
+      const { width, height } = getViewportSize();
+      const portrait = height >= width;
+
+      camera.aspect = width / height;
+
+      if (isMobileDevice()) {
+        /*
+          Pull the camera farther back on portrait phones so the full
+          curvature surface remains visible instead of being cropped.
+        */
+        camera.fov = portrait ? 60 : 52;
+
+        if (portrait) {
+          camera.position.set(0, 7.4, 14.6);
+        } else {
+          camera.position.set(0, 6.2, 11.7);
+        }
+      } else {
+        camera.fov = 48;
+        camera.position.set(0, 6.0, 10.5);
+      }
+
+      controls.target.set(0, -1.0, 0);
+      camera.updateProjectionMatrix();
+      controls.update();
+    }
+
+    function resizeRenderer() {
+      const { width, height } = getViewportSize();
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      renderer.setPixelRatio(
+        Math.min(
+          window.devicePixelRatio || 1,
+          getPixelRatioCap()
+        )
+      );
+
+      renderer.setSize(width, height, false);
+    }
+
+    applyDefaultView();
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.35));
 
@@ -347,7 +577,7 @@
 
     const config = {
       size: 12,
-      segments: 140,
+      segments: isMobileDevice() ? 96 : 140,
       mass: parseFloat(massSlider.value),
       depth: parseFloat(depthSlider.value),
       bend: parseFloat(bendSlider.value),
@@ -387,7 +617,7 @@
     let aimCurrent = null;
 
     const aimMarker = new THREE.Mesh(
-      new THREE.SphereBufferGeometry(0.08, 16, 16),
+      new THREE.SphereBufferGeometry(0.08, isMobileDevice() ? 10 : 16, isMobileDevice() ? 10 : 16),
       new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.95 })
     );
     aimMarker.visible = false;
@@ -484,7 +714,7 @@
         opacity: config.showGrid ? 0.30 : 0.0
       });
 
-      const count = 32;
+      const count = isMobileDevice() ? 24 : 32;
       const half = config.size * 0.5;
 
       for (let i = 0; i <= count; i++) {
@@ -519,7 +749,7 @@
       const photonR = getPhotonSphereRadius();
 
       horizonRing = new THREE.Mesh(
-        new THREE.RingBufferGeometry(horizonR * 0.88, horizonR, 72),
+        new THREE.RingBufferGeometry(horizonR * 0.88, horizonR, isMobileDevice() ? 48 : 72),
         new THREE.MeshBasicMaterial({
           color: 0xffffff,
           side: THREE.DoubleSide,
@@ -532,7 +762,7 @@
       scene.add(horizonRing);
 
       photonSphereRing = new THREE.Mesh(
-        new THREE.RingBufferGeometry(photonR * 0.988, photonR, 88),
+        new THREE.RingBufferGeometry(photonR * 0.988, photonR, isMobileDevice() ? 56 : 88),
         new THREE.MeshBasicMaterial({
           color: 0xffffff,
           side: THREE.DoubleSide,
@@ -545,7 +775,7 @@
       scene.add(photonSphereRing);
 
       singularityMesh = new THREE.Mesh(
-        new THREE.SphereBufferGeometry(horizonR * 0.48, 24, 24),
+        new THREE.SphereBufferGeometry(horizonR * 0.48, isMobileDevice() ? 16 : 24, isMobileDevice() ? 16 : 24),
         new THREE.MeshPhongMaterial({
           color: 0x000000,
           emissive: 0x020202,
@@ -613,7 +843,7 @@
       });
 
       const sphere = new THREE.Mesh(
-        new THREE.SphereBufferGeometry(0.09, 14, 14),
+        new THREE.SphereBufferGeometry(0.09, isMobileDevice() ? 10 : 14, isMobileDevice() ? 10 : 14),
         photonMaterial
       );
 
@@ -1406,9 +1636,7 @@
     clearPhotonsButton.addEventListener("click", clearPhotons);
 
     resetViewButton.addEventListener("click", () => {
-      camera.position.set(0, 6.0, 10.5);
-      controls.target.set(0, -1.0, 0);
-      controls.update();
+      applyDefaultView();
     });
 
     massSlider.addEventListener("input", () => {
@@ -1433,6 +1661,12 @@
 
     renderer.domElement.addEventListener("pointerdown", (event) => {
       if (!launchMode) return;
+
+      event.preventDefault();
+
+      try {
+        renderer.domElement.setPointerCapture(event.pointerId);
+      } catch (_) {}
 
       const hit = surfaceIntersection(event);
       if (!hit) return;
@@ -1483,24 +1717,51 @@
       refreshReadout();
     }
 
-    renderer.domElement.addEventListener("pointerup", finishLaunch);
-    renderer.domElement.addEventListener("pointerleave", () => {
-      if (aiming) finishLaunch();
+    renderer.domElement.addEventListener("pointerup", (event) => {
+      finishLaunch();
+
+      try {
+        renderer.domElement.releasePointerCapture(event.pointerId);
+      } catch (_) {}
     });
 
-    window.addEventListener("resize", () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
-      renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.domElement.addEventListener("pointercancel", () => {
+      clearAim();
+    });
+
+    renderer.domElement.addEventListener("pointerleave", () => {
+      if (aiming && !isMobileDevice()) finishLaunch();
+    });
+
+    window.addEventListener("resize", resizeRenderer, { passive: true });
+
+    window.visualViewport?.addEventListener(
+      "resize",
+      resizeRenderer,
+      { passive: true }
+    );
+
+    window.addEventListener("orientationchange", () => {
+      window.setTimeout(() => {
+        applyDefaultView();
+        resizeRenderer();
+      }, 120);
+    });
+
+    MOBILE_QUERY.addEventListener?.("change", () => {
+      applyDefaultView();
+      resizeRenderer();
+      buildSurface();
     });
 
     const clock = new THREE.Clock();
+    let readoutAccumulator = 0;
 
     updateUIValues();
     buildSurface();
     refreshReadout();
     setLaunchMode(false);
+    resizeRenderer();
 
     function animate() {
       requestAnimationFrame(animate);
@@ -1509,7 +1770,16 @@
 
       controls.update();
       updatePhotons(dt);
-      refreshReadout();
+
+      /*
+        Updating DOM text every rendered frame is wasteful on a phone.
+        8 Hz is still visually immediate for these diagnostics.
+      */
+      readoutAccumulator += dt;
+      if (readoutAccumulator >= 0.125) {
+        refreshReadout();
+        readoutAccumulator = 0;
+      }
 
       if (singularityMesh) {
         singularityMesh.rotation.y += dt * 0.2;
