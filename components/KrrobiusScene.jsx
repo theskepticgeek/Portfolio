@@ -96,16 +96,22 @@ export default function KrrobiusScene() {
   }, [nightTransitionVisible]);
 
   const navigateToPortfolioItem = (targetId) => {
-  // Playground remains its own standalone page
-  if (targetId === "playground") {
-    window.location.href = "/portfolio/playground.html";
+  // Resume also passes through Starry Night first
+  if (targetId === "resume") {
+    window.location.href = "/starry-night?target=resume";
     return;
   }
 
-  // Send the requested portfolio section as a query parameter.
-  // Using ?section= instead of # prevents the browser from instantly
-  // jumping to the section before our smooth-scroll animation runs.
-  window.location.href = `/portfolio?section=${encodeURIComponent(targetId)}`;
+  // Playground also passes through Starry Night first
+  if (targetId === "playground") {
+    window.location.href = "/starry-night?target=playground";
+    return;
+  }
+
+  // Every normal portfolio glyph first goes through
+  // the Starry Night transition page.
+  window.location.href =
+    `/starry-night?section=${encodeURIComponent(targetId)}`;
 };
 
   useEffect(() => {
@@ -2909,7 +2915,9 @@ export default function KrrobiusScene() {
       href={
         item.id === "playground"
           ? "/portfolio/playground.html"
-          : `/portfolio?section=${encodeURIComponent(item.id)}`
+          :item.id === "resume"
+      ? "/resume.pdf"
+      : `/portfolio?section=${encodeURIComponent(item.id)}`
       }
       onClick={(event) => {
         event.preventDefault();

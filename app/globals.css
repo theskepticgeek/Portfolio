@@ -1264,35 +1264,50 @@ canvas.webgl {
   text-transform: uppercase;
 }
 
-/* Hero Section: 2 columns (Left: picture + Who I am + buttons, Right: Socials) */
+/* Hero Section: picture/socials on the left, Who I am fills the remaining width */
 .portfolio-hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 290px;
-  gap: 32px;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 0;
   align-items: start;
 }
 
-/* Profile row: Circle picture + Info column */
+/* Profile row: left profile column + full-width information column */
 .portfolio-profile-row {
   display: flex;
-  gap: 26px;
+  width: 100%;
+  gap: 32px;
   align-items: flex-start;
+}
+
+/* Ensures the new single hero row spans the old two-column grid completely */
+.portfolio-profile-row-full {
+  width: 100%;
+  grid-column: 1 / -1;
 }
 
 /* Circular picture frame */
 .portfolio-photo-frame {
-  width: 140px;
-  height: 140px;
-  min-width: 140px;
+  width: 300px;
+  height: 300px;
+  min-width: 300px;
+
   border-radius: 50%;
   overflow: hidden;
   border: 3px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 0 25px rgba(254, 240, 138, 0.3),
-              0 12px 30px rgba(0, 0, 0, 0.65);
+
+  box-shadow:
+    0 0 25px rgba(254, 240, 138, 0.3),
+    0 12px 30px rgba(0, 0, 0, 0.65);
+
   position: relative;
   background: #000;
   flex-shrink: 0;
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease;
+
+  transition:
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.28s ease;
 }
 
 .portfolio-photo-frame:hover {
@@ -1309,9 +1324,159 @@ canvas.webgl {
   display: block;
 }
 
+/* Left profile column: picture stays in place, social glyphs sit directly beneath it */
+.portfolio-profile-left {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+/* ==================================================
+   PROFILE NAME / PLAYGROUND LINK
+   ================================================== */
+
+.portfolio-profile-name,
+.portfolio-profile-name:visited {
+  display: inline-block;
+
+  margin-top: 2px;
+  margin-bottom: 0;
+
+  font-family: "Cinzel", "Space Grotesk", serif;
+
+  font-size: 24px;
+  font-weight: 800;
+
+  letter-spacing: 0.11em;
+
+  text-transform: uppercase;
+  text-decoration: none;
+
+  /*
+    Blue interior matching the portfolio.
+    White stroke makes it look "hollow".
+  */
+  color: #0b1e4a;
+
+  -webkit-text-stroke:
+    1px rgba(255, 255, 255, 0.92);
+
+  paint-order: stroke fill;
+
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    -webkit-text-stroke 0.25s ease,
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.25s ease,
+    text-shadow 0.25s ease;
+}
+
+
+/* ==================================================
+   HOVER
+   Hollow blue -> glowing solid white
+   ================================================== */
+
+.portfolio-profile-name:hover {
+  color: #ffffff;
+
+  -webkit-text-stroke:
+    1px rgba(255, 255, 255, 1);
+
+  transform:
+    translateY(-2px)
+    scale(1.035);
+
+  text-shadow:
+    0 0 5px rgba(255, 255, 255, 0.95),
+    0 0 12px rgba(147, 197, 253, 0.8),
+    0 0 24px rgba(59, 130, 246, 0.55),
+    0 0 38px rgba(37, 99, 235, 0.3);
+
+  filter:
+    drop-shadow(
+      0 0 8px
+      rgba(147, 197, 253, 0.55)
+    );
+}
+
+
+.portfolio-profile-name:active {
+  transform: scale(0.97);
+}
+/* Small icon-only social row below the portrait */
+.portfolio-social-icon-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 2px;
+}
+
+/* Icon-only social links. Explicit :visited color prevents purple SVGs after clicking. */
+.portfolio-social-icon-link,
+.portfolio-social-icon-link:visited {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: none;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.84);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color 0.2s ease,
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.2s ease;
+}
+
+/* Prevent SVGs with only a viewBox from inheriting oversized browser dimensions */
+.portfolio-social-icon-link svg {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px;
+  min-height: 18px;
+  display: block;
+  fill: currentColor;
+  pointer-events: none;
+}
+
+/* Clean white/blue glow on hover */
+.portfolio-social-icon-link:hover,
+.portfolio-social-icon-link:focus-visible {
+  color: #ffffff;
+  transform: translateY(-2px) scale(1.15);
+  filter:
+    drop-shadow(0 0 4px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 0 9px rgba(147, 197, 253, 0.78))
+    drop-shadow(0 0 16px rgba(59, 130, 246, 0.42));
+}
+
+.portfolio-social-icon-link:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.75);
+  outline-offset: 4px;
+}
+
+.portfolio-social-icon-link:active {
+  transform: translateY(0) scale(0.92);
+}
+
 /* Profile Info column */
 .portfolio-profile-info {
-  flex: 1;
+  flex: 1 1 auto;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -1320,6 +1485,7 @@ canvas.webgl {
 
 /* White box for "Who I am" */
 .portfolio-white-box {
+  width: 100%;
   background: #ffffff;
   border-radius: 18px;
   padding: 24px 28px;
@@ -1778,22 +1944,42 @@ canvas.webgl {
   .portfolio-hero-grid {
     grid-template-columns: 1fr;
   }
+
   .portfolio-profile-row {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    gap: 24px;
   }
+
+  .portfolio-photo-frame {
+    width: 240px;
+    height: 240px;
+    min-width: 240px;
+  }
+
   .portfolio-white-box {
     text-align: left;
   }
-  .portfolio-btn-group {
-    justify-content: center;
-  }
+
   .portfolio-scroll-container {
     padding: 28px 22px;
   }
+
   .portfolio-projects-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .portfolio-profile-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .portfolio-profile-info {
+    width: 100%;
+  }
+
+  .portfolio-btn-group {
+    justify-content: center;
   }
 }
 
@@ -1803,21 +1989,44 @@ canvas.webgl {
     gap: 8px;
     align-items: flex-start;
   }
+
   .portfolio-hero-title {
     font-size: 24px;
   }
+
   .portfolio-photo-frame {
-    width: 110px;
-    height: 110px;
-    min-width: 110px;
+    width: 180px;
+    height: 180px;
+    min-width: 180px;
   }
+
+  .portfolio-social-icon-row {
+    gap: 10px;
+  }
+
+  .portfolio-social-icon-link,
+  .portfolio-social-icon-link:visited {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+  }
+
+  .portfolio-social-icon-link svg {
+    width: 17px !important;
+    height: 17px !important;
+    min-width: 17px;
+    min-height: 17px;
+  }
+
   .portfolio-white-box {
     padding: 18px 20px;
   }
-  .portfolio-white-title {
+
+  .portfolio-who-title {
     font-size: 20px;
   }
-  .portfolio-white-desc {
+
+  .portfolio-who-desc {
     font-size: 14px;
   }
 }

@@ -8,15 +8,55 @@ export default function StarryNightPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Begin preparing the portfolio immediately
-    router.prefetch("/portfolio");
+    const params = new URLSearchParams(window.location.search);
 
-    // But keep Starry Night visible for at least 5 seconds
-    const timer = setTimeout(() => {
-      router.replace("/portfolio");
+    const section = params.get("section");
+    const target = params.get("target");
+
+    let destination = "/portfolio";
+    let isNextRoute = true;
+
+    // ==================================================
+    // PORTFOLIO SECTION GLYPHS
+    // ==================================================
+    if (section) {
+      destination =
+        `/portfolio?section=${encodeURIComponent(section)}`;
+    }
+
+    // ==================================================
+    // RESUME GLYPH
+    // ==================================================
+    else if (target === "resume") {
+      destination = "/resume.pdf";
+      isNextRoute = false;
+    }
+
+    // ==================================================
+    // PLAYGROUND GLYPH
+    // ==================================================
+    else if (target === "playground") {
+      destination = "/portfolio/playground.html";
+      isNextRoute = false;
+    }
+
+    // Prefetch actual Next.js portfolio pages
+    if (isNextRoute) {
+      router.prefetch(destination);
+    }
+
+    // Starry Night animation duration
+    const timer = window.setTimeout(() => {
+      if (isNextRoute) {
+        router.replace(destination);
+      } else {
+        window.location.replace(destination);
+      }
     }, 5000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, [router]);
 
   return (
@@ -36,4 +76,4 @@ export default function StarryNightPage() {
       />
     </main>
   );
-} 
+}
