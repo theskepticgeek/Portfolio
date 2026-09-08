@@ -244,12 +244,17 @@ function fitCameraToViewport(width, height) {
             });
 
 
-            renderer.setPixelRatio(
-            Math.min(
-                window.devicePixelRatio,
-                2
-            )
-            );
+            const getRenderPixelRatio = () => {
+  const isMobile =
+    window.matchMedia("(max-width: 768px), (pointer: coarse)").matches;
+
+  return Math.min(
+    window.devicePixelRatio || 1,
+    isMobile ? 1.5 : 3
+  );
+};
+
+renderer.setPixelRatio(getRenderPixelRatio());
 
 
             renderer.setSize(
@@ -808,9 +813,9 @@ function fitCameraToViewport(width, height) {
 
                 halfWidth: 0.30,
 
-                tSegments: 320,
+                tSegments: 640,
 
-                sSegments: 16
+                sSegments: 32
 
             });
 
@@ -1783,7 +1788,7 @@ function fitCameraToViewport(width, height) {
             // ======================================================
 
             function createPortfolioTexture(item) {
-              const pixelRatio = 2;
+              const pixelRatio = 4;
               const logicalSize = 64;
 
               const canvas = document.createElement("canvas");

@@ -315,43 +315,73 @@ also experimenting with ML/DL-based market analysis and financial modeling.
 </div>
         </div>
       
+<div className="portfolio-btn-group">
 
-      <div className="portfolio-btn-group">
+  {/* View Projects */}
+  <a
+    href="#projects"
+    onClick={(e) => {
+      e.preventDefault();
+      scrollToSection("projects");
+    }}
+    className="portfolio-btn-primary"
+  >
+    <span>View Projects</span>
+  
+  </a>
 
-        <a
-          href="#projects"
-          onClick={(e) => {
-            e.preventDefault();
-            scrollToSection("projects");
-          }}
-          className="portfolio-btn-primary"
-        >
-          <span>View Projects</span>
-          <span className="portfolio-btn-arrow">↓</span>
-        </a>
+  {/* Current Work */}
+  <a
+    href="#current-work"
+    onClick={(e) => {
+      e.preventDefault();
+      scrollToSection("current-work");
+    }}
+    className="portfolio-btn-secondary"
+  >
+    <span>Current Work</span>
+  
+  </a>
 
-        <a
-          href="#current-work"
-          onClick={(e) => {
-            e.preventDefault();
-            scrollToSection("current-work");
-          }}
-          className="portfolio-btn-secondary"
-        >
-          <span>Current Work</span>
-          <span className="portfolio-btn-arrow">↓ </span>
-        </a>
-          
-          <a
-          href="/resume.pdf"
-          className="portfolio-btn-secondary"
-  target="_blank"
-  rel="noopener noreferrer"
-        >
-          <span>Resume</span>
-          <span className="portfolio-btn-arrow">→</span>
-        </a>
-      </div>
+  {/* Resume */}
+  <a
+    href="/resume.pdf"
+    className="portfolio-btn-secondary"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <span>Resume</span>
+    
+  </a>
+
+  {/* Contact */}
+  <a
+    href="#contact"
+    onClick={(e) => {
+      e.preventDefault();
+      scrollToSection("contact");
+    }}
+    className="portfolio-btn-secondary portfolio-contact-nav-btn"
+  >
+    <span className="portfolio-contact-nav-content">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="portfolio-contact-nav-icon"
+        aria-hidden="true"
+      >
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.8a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.28-1.28a2 2 0 0 1 2.11-.45c.9.33 1.84.56 2.8.69A2 2 0 0 1 22 16.92z" />
+      </svg>
+
+      <span>Contact</span>
+    </span>
+  </a>
+
+</div>
     </div>
 
   </div>
