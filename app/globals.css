@@ -2880,7 +2880,528 @@ canvas.webgl {
   }
 }
 
+/* ==================================================
+   PORTFOLIO — PHONE OPTIMIZATION
+   ================================================== */
 
+@media (max-width: 600px) {
+
+  /* -----------------------------------------------
+     MOBILE CHROME VIEWPORT
+     ----------------------------------------------- */
+
+  .portfolio-main-page,
+  .portfolio-bg-wrapper,
+  .portfolio-content-layer {
+    width: 100vw;
+
+    /* fallback */
+    height: 100vh;
+
+    /* Chrome / modern mobile browsers */
+    height: 100dvh;
+  }
+
+
+  /* -----------------------------------------------
+     MAIN CONTENT WRAPPER
+     ----------------------------------------------- */
+
+  .portfolio-content-layer {
+    justify-content: flex-start;
+
+    padding:
+      max(8px, env(safe-area-inset-top))
+      8px
+      max(8px, env(safe-area-inset-bottom));
+
+    overflow: hidden;
+  }
+
+
+  /* -----------------------------------------------
+     TOP BAR
+     ----------------------------------------------- */
+
+  .portfolio-top-bar {
+    width: 100%;
+
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    margin: 0 0 8px 0;
+
+    gap: 8px;
+  }
+
+  .portfolio-back-btn {
+    padding: 7px 13px;
+
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+  }
+
+
+  /* -----------------------------------------------
+     MAIN GLASS SCROLL AREA
+     ----------------------------------------------- */
+
+  .portfolio-scroll-container {
+    width: 100%;
+
+    height: calc(
+      100dvh -
+      58px -
+      env(safe-area-inset-top) -
+      env(safe-area-inset-bottom)
+    );
+
+    max-height: none;
+
+    padding: 22px 16px 34px;
+
+    border-radius: 18px;
+
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+
+    scrollbar-width: none;
+  }
+
+  .portfolio-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+
+
+  /* -----------------------------------------------
+     HERO
+     ----------------------------------------------- */
+
+  .portfolio-hero-title {
+    font-size: 23px;
+    line-height: 1.15;
+
+    letter-spacing: 0.09em;
+
+    margin-bottom: 22px;
+  }
+
+  .portfolio-profile-row {
+    gap: 20px;
+  }
+
+  .portfolio-photo-frame {
+    width: 160px;
+    height: 160px;
+    min-width: 160px;
+  }
+
+  .portfolio-profile-name {
+    font-size: 19px;
+    letter-spacing: 0.08em;
+  }
+
+
+  /* -----------------------------------------------
+     WHO I AM
+     ----------------------------------------------- */
+
+  .portfolio-white-box {
+    padding: 18px 16px;
+
+    border-radius: 15px;
+  }
+
+  .portfolio-who-title {
+    font-size: 19px;
+  }
+
+  .portfolio-who-desc {
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+
+  .portfolio-white-pills {
+    gap: 6px;
+  }
+
+  .portfolio-white-pill {
+    font-size: 9.5px;
+    padding: 4px 8px;
+  }
+
+
+  /* -----------------------------------------------
+     HERO BUTTONS
+     ----------------------------------------------- */
+
+  .portfolio-btn-group {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: 1fr;
+
+    gap: 9px;
+  }
+
+  .portfolio-btn-primary,
+  .portfolio-btn-secondary {
+    width: 100%;
+
+    justify-content: space-between;
+
+    padding: 12px 16px;
+
+    font-size: 10.5px;
+  }
+
+
+  /* -----------------------------------------------
+     SECTION SPACING
+     ----------------------------------------------- */
+
+  .portfolio-section-divider {
+    margin-top: 38px;
+    padding-top: 28px;
+  }
+
+  .portfolio-section-head {
+    margin-bottom: 17px;
+  }
+
+  .portfolio-section-title {
+    font-size: 21px;
+
+    letter-spacing: 0.1em;
+
+    line-height: 1.2;
+
+    overflow-wrap: anywhere;
+  }
+
+  .portfolio-section-sub {
+    font-size: 8px;
+
+    letter-spacing: 0.14em;
+
+    line-height: 1.55;
+  }
+
+
+  /* -----------------------------------------------
+     PROJECT / CURRENT WORK CARDS
+     ----------------------------------------------- */
+
+  .portfolio-project-card {
+    padding: 20px 17px;
+
+    border-radius: 15px;
+
+    gap: 15px;
+
+    min-width: 0;
+  }
+
+  .portfolio-project-name {
+    font-size: 18px;
+
+    line-height: 1.28;
+
+    letter-spacing: 0.06em;
+
+    overflow-wrap: anywhere;
+  }
+
+  .portfolio-project-quote {
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+  .portfolio-project-details {
+    font-size: 12.5px;
+    line-height: 1.58;
+  }
+
+  .portfolio-project-details p {
+    margin-bottom: 10px;
+  }
+
+
+  /* -----------------------------------------------
+     BADGES
+     Important for your long Options badge
+     ----------------------------------------------- */
+
+  .portfolio-card-badge {
+    max-width: 100%;
+
+    white-space: normal;
+
+    font-size: 8px;
+
+    letter-spacing: 0.12em;
+
+    line-height: 1.4;
+
+    padding: 4px 8px;
+  }
+
+
+  /* -----------------------------------------------
+     TECH TAGS
+     ----------------------------------------------- */
+
+  .portfolio-tech-tags {
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .portfolio-tech-tag {
+    font-size: 9px;
+
+    padding: 4px 8px;
+
+    letter-spacing: 0.05em;
+  }
+
+
+  /* -----------------------------------------------
+     ECOQUANT CONTRACT
+     ----------------------------------------------- */
+
+  .portfolio-contract-link {
+    max-width: 100%;
+
+    font-size: 10px;
+
+    overflow-wrap: anywhere;
+  }
+
+
+  /* -----------------------------------------------
+     RESEARCH
+     ----------------------------------------------- */
+
+  .portfolio-research-card {
+    padding: 22px 18px;
+
+    border-radius: 16px;
+  }
+
+  .portfolio-research-title {
+    font-size: 19px;
+
+    line-height: 1.35;
+
+    letter-spacing: 0.04em;
+  }
+
+  .portfolio-research-para {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .portfolio-research-meta-row {
+    align-items: flex-start;
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+    padding-bottom: 13px;
+  }
+
+  .portfolio-research-springer {
+    font-size: 8px;
+
+    letter-spacing: 0.12em;
+
+    line-height: 1.5;
+  }
+
+  .portfolio-research-cta {
+    width: 100%;
+
+    justify-content: space-between;
+
+    padding: 12px 15px;
+
+    font-size: 10px;
+  }
+
+
+  /* -----------------------------------------------
+     EXPERIENCE
+     ----------------------------------------------- */
+
+  .portfolio-exp-card,
+  .portfolio-exp-compact {
+    padding: 20px 17px;
+
+    border-radius: 15px;
+  }
+
+  .portfolio-exp-header {
+    flex-direction: column;
+
+    gap: 4px;
+  }
+
+  .portfolio-exp-title {
+    font-size: 18px;
+  }
+
+  .portfolio-exp-role {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+
+  .portfolio-exp-desc {
+    font-size: 13px;
+    line-height: 1.62;
+  }
+
+
+  /* -----------------------------------------------
+     TECH STACK
+     ----------------------------------------------- */
+
+  .portfolio-tech-dashboard {
+    grid-template-columns: 1fr;
+
+    gap: 11px;
+  }
+
+  .portfolio-tech-card {
+    padding: 17px 15px;
+
+    border-radius: 12px;
+
+    gap: 11px;
+  }
+
+  .portfolio-tech-cat-header {
+    font-size: 9px;
+
+    letter-spacing: 0.18em;
+  }
+
+  .portfolio-tech-pill-item {
+    font-size: 9.5px;
+
+    padding: 4px 8px;
+  }
+
+
+  /* -----------------------------------------------
+     EDUCATION
+     ----------------------------------------------- */
+
+  .portfolio-education-card {
+    padding: 21px 17px;
+
+    border-radius: 15px;
+  }
+
+  .portfolio-edu-header-row {
+    flex-direction: column;
+
+    gap: 8px;
+  }
+
+  .portfolio-edu-inst {
+    font-size: 18px;
+
+    line-height: 1.3;
+  }
+
+  .portfolio-edu-degree {
+    font-size: 11px;
+
+    line-height: 1.5;
+
+    letter-spacing: 0.07em;
+  }
+
+  .portfolio-edu-desc {
+    font-size: 13px;
+    line-height: 1.62;
+  }
+
+
+  /* -----------------------------------------------
+     CONTACT
+     ----------------------------------------------- */
+
+  .portfolio-contact-card {
+    padding: 22px 17px;
+
+    border-radius: 16px;
+  }
+
+  .portfolio-contact-heading {
+    font-size: 21px;
+
+    line-height: 1.25;
+
+    overflow-wrap: anywhere;
+  }
+
+  .portfolio-contact-body {
+    font-size: 13px;
+
+    line-height: 1.62;
+
+    margin-bottom: 20px;
+  }
+
+  .portfolio-contact-actions {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    width: 100%;
+
+    gap: 9px;
+  }
+
+  .portfolio-contact-cta {
+    width: 100%;
+
+    justify-content: space-between;
+
+    padding: 13px 16px;
+
+    margin-bottom: 0;
+
+    font-size: 10.5px;
+  }
+
+  .portfolio-contact-socials-grid {
+    grid-template-columns: 1fr;
+
+    padding-top: 20px;
+  }
+
+
+  /* -----------------------------------------------
+     FOOTER
+     ----------------------------------------------- */
+
+  .portfolio-footer-redesign {
+    margin-top: 45px;
+
+    gap: 15px;
+  }
+
+  .portfolio-footer-center {
+    white-space: normal;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+  }
+}
 
 
 
