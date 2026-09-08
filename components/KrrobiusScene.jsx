@@ -9,16 +9,15 @@ import Link from "next/link";
 // longitudinal gridline of the ribbon, avoiding the outer corners and edges.
 const PORTFOLIO_ITEMS = [
   { id: "about", label: "ABOUT ME", phase: 0 / 54, track: 0 },
-  { id: "projects", label: "PROJECTS", phase: 5 / 54, track: 0 },
-  { id: "research", label: "RESEARCH", phase: 10 / 54, track: 0 },
-  { id: "current-work", label: "CURRENT WORK", phase: 15 / 54, track: 0 },
-  { id: "experience", label: "EXPERIENCE", phase: 20 / 54, track: 0 },
-  { id: "tech-stack", label: "TECH STACK", phase: 25 / 54, track: 0 },
-  { id: "education", label: "EDUCATION", phase: 30 / 54, track: 0 },
-  { id: "achievements", label: "ACHIEVEMENTS", phase: 35 / 54, track: 0 },
-  { id: "resume", label: "RESUME", phase: 40 / 54, track: 0 },
-  { id: "contact", label: "CONTACT", phase: 45 / 54, track: 0 },
-  { id: "playground", label: "PLAYGROUND", phase: 50 / 54, track: 0 },
+  { id: "projects", label: "PROJECTS", phase: 5.4 / 54, track: 0 },
+  { id: "research", label: "RESEARCH", phase: 10.8 / 54, track: 0 },
+  { id: "current-work", label: "CURRENT WORK", phase: 16.2 / 54, track: 0 },
+  { id: "experience", label: "EXPERIENCE", phase: 21.6 / 54, track: 0 },
+  { id: "tech-stack", label: "TECH STACK", phase: 27 / 54, track: 0 },
+  { id: "education", label: "EDUCATION", phase: 32.4 / 54, track: 0 },
+  { id: "resume", label: "RESUME", phase: 37.8 / 54, track: 0 },
+  { id: "contact", label: "CONTACT", phase: 43.2 / 54, track: 0 },
+  { id: "playground", label: "PLAYGROUND", phase: 48.6 / 54, track: 0 },
 ];
 
 export default function KrrobiusScene() {
@@ -98,7 +97,11 @@ export default function KrrobiusScene() {
   const navigateToPortfolioItem = (targetId) => {
   // Resume also passes through Starry Night first
   if (targetId === "resume") {
-    window.location.href = "/starry-night?target=resume";
+    window.open(
+    "/starry-night?target=resume&newtab=1",
+    "_blank",
+    "noopener,noreferrer"
+  );
     return;
   }
 
@@ -155,23 +158,77 @@ export default function KrrobiusScene() {
             // ======================================================
 
             const camera = new THREE.PerspectiveCamera(
-            40,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            100
-            );
+  40,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  100
+);
 
-            camera.position.set(
-            0,
-            0,
-            6.5
-            );
+camera.position.set(0, 0, 6.5);
+camera.lookAt(0, 0, 0);
 
-            camera.lookAt(
-            0,
-            0,
-            0
-            );
+/*
+  Responsive camera fitting.
+
+  Desktop:
+  FOV 40
+  Z = 6.5
+
+  Portrait mobile:
+  Wider FOV + dynamically calculated camera distance
+  so the whole Möbius strip remains visible.
+*/
+function fitCameraToViewport(width, height) {
+  const aspect = width / height;
+
+  const isPortraitMobile =
+    width <= 768 ||
+    aspect < 0.78;
+
+  if (!isPortraitMobile) {
+    // Preserve your existing desktop appearance exactly.
+    camera.fov = 40;
+    camera.position.z = 6.5;
+  } else {
+    /*
+      Wider vertical FOV gives us more horizontal FOV
+      on tall portrait screens.
+    */
+    camera.fov = 58;
+
+    const verticalFov =
+      THREE.MathUtils.degToRad(camera.fov);
+
+    /*
+      Approximate horizontal half-width of the complete
+      strip + ribbon width + floating glyphs.
+    */
+    const sceneHalfWidth = 2.65;
+
+    // Small safety margin so nothing touches the screen edge.
+    const fitMargin = 1.10;
+
+    /*
+      Horizontal visible half-width:
+
+      tan(FOV / 2) * distance * aspect
+
+      Solve for distance.
+    */
+    const distanceForWidth =
+      (sceneHalfWidth * fitMargin) /
+      (
+        Math.tan(verticalFov / 2) *
+        aspect
+      );
+
+    camera.position.z =
+      Math.max(6.5, distanceForWidth);
+  }
+
+  camera.aspect = aspect;
+  camera.updateProjectionMatrix();
+}
 
 
 
@@ -2718,29 +2775,67 @@ export default function KrrobiusScene() {
             // WINDOW RESIZE
             // ======================================================
 
-            const handleResize = () => {
-                camera.aspect =
-                    window.innerWidth /
-                    window.innerHeight;
+            // ======================================================
+// RESPONSIVE VIEWPORT / MOBILE CHROME
+// ======================================================
 
-                camera.updateProjectionMatrix();
+const getViewportSize = () => {
+  const viewport = window.visualViewport;
 
-                renderer.setSize(
-                    window.innerWidth,
-                    window.innerHeight
-                );
+  return {
+    width: Math.round(
+      viewport?.width || window.innerWidth
+    ),
 
-                renderer.setPixelRatio(
-                    Math.min(
-                        window.devicePixelRatio,
-                        2
-                    )
-                );
+    height: Math.round(
+      viewport?.height || window.innerHeight
+    ),
+  };
+};
 
-                resizeBackground();
-            };
 
-            window.addEventListener("resize", handleResize);
+const handleResize = () => {
+  const { width, height } = getViewportSize();
+
+  // Fit the Möbius strip inside the available viewport.
+  fitCameraToViewport(width, height);
+
+  renderer.setSize(
+    width,
+    height,
+    false
+  );
+
+  renderer.setPixelRatio(
+    Math.min(
+      window.devicePixelRatio || 1,
+      2
+    )
+  );
+
+  resizeBackground();
+};
+
+
+window.addEventListener(
+  "resize",
+  handleResize
+);
+
+/*
+  Important for Chrome mobile.
+
+  The visible viewport changes when the address/navigation
+  bars appear and disappear.
+*/
+window.visualViewport?.addEventListener(
+  "resize",
+  handleResize
+);
+
+
+// Run once immediately on page load.
+handleResize();
 
 
             // ======================================================
@@ -2836,6 +2931,11 @@ export default function KrrobiusScene() {
       document.documentElement.removeEventListener("pointerleave", handlePointerLeave);
       window.removeEventListener("blur", handleWindowBlur);
       window.removeEventListener("resize", handleResize);
+      
+      window.visualViewport?.removeEventListener(
+  "resize",
+  handleResize
+);
 
       for (const mesh of portfolioMeshes) {
         scene.remove(mesh);

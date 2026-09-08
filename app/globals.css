@@ -20,9 +20,17 @@ body {
 .krrobius-root {
   position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
+
+  width: 100vw;
+
+  height: 100vh;
+  height: 100dvh;
+
   overflow: hidden;
+
+  overscroll-behavior: none;
+
+  touch-action: manipulation;
 }
 
 #bgCanvas {
@@ -36,12 +44,14 @@ body {
 }
 
 canvas.webgl {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
+
+  width: 100% !important;
+  height: 100% !important;
+
   display: block;
+
   pointer-events: none;
 }
 
@@ -1234,6 +1244,181 @@ canvas.webgl {
   scroll-behavior: smooth;
 }
 
+/* ==================================================
+   CONTACT ACTIONS - EMAIL + WHATSAPP
+   ================================================== */
+
+.portfolio-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.portfolio-contact-icon-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.portfolio-contact-glyph {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+
+  color: currentColor;
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease,
+    text-shadow 0.25s ease;
+}
+
+.portfolio-contact-icon-link:hover .portfolio-contact-glyph {
+  transform: scale(1.14);
+
+  filter:
+    drop-shadow(0 0 5px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 0 12px rgba(96, 165, 250, 0.75));
+}
+
+/* ==================================================
+   ECOQUANT CONTRACT + PROJECT LINKS
+   ================================================== */
+
+.portfolio-contract-link,
+.portfolio-contract-link:visited {
+  display: inline-flex;
+  align-items: center;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
+
+  font-size: 12px;
+  letter-spacing: 0.04em;
+
+  color: rgba(255, 255, 255, 0.76);
+  text-decoration: none;
+
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.portfolio-contract-link:hover {
+  color: #ffffff;
+  transform: translateX(2px);
+
+  text-shadow:
+    0 0 7px rgba(255, 255, 255, 0.8),
+    0 0 16px rgba(96, 165, 250, 0.55);
+}
+
+/* ==================================================
+   PROJECT LINK ICON ROW
+   GitHub + Celo
+   ================================================== */
+
+.portfolio-project-links {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+/* Make BOTH buttons identical */
+.portfolio-project-links .portfolio-repo-box {
+  width: 56px;
+  height: 46px;
+
+  min-width: 56px;
+  min-height: 46px;
+
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 56px;
+}
+
+/* GitHub icon */
+.portfolio-project-links .portfolio-repo-icon {
+  width: 19px;
+  height: 19px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portfolio-project-links .portfolio-repo-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* Celo icon */
+.portfolio-project-links .portfolio-celo-icon {
+  width: 21px;
+  height: 21px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: rgba(255, 255, 255, 0.82);
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+
+.portfolio-project-links .portfolio-celo-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* Celo hover */
+.portfolio-celo-link:hover .portfolio-celo-icon {
+  color: #f5ff7a;
+
+  transform: scale(1.13);
+
+  filter:
+    drop-shadow(0 0 5px rgba(255, 255, 255, 0.9))
+    drop-shadow(0 0 11px rgba(245, 255, 122, 0.75))
+    drop-shadow(0 0 18px rgba(245, 255, 122, 0.4));
+}
+
+/* GitHub hover */
+.portfolio-project-links
+  .portfolio-repo-box:hover
+  .portfolio-repo-icon {
+  transform: scale(1.13);
+
+  filter:
+    drop-shadow(0 0 5px rgba(255, 255, 255, 0.9))
+    drop-shadow(0 0 12px rgba(96, 165, 250, 0.65));
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+
+
+/* extra glow for WhatsApp button */
+.portfolio-contact-whatsapp:hover {
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.18),
+    0 0 22px rgba(59, 130, 246, 0.28);
+}
+
 /* Custom sleek scrollbar for centered container */
 .portfolio-scroll-container::-webkit-scrollbar {
   width: 8px;
@@ -1535,6 +1720,30 @@ canvas.webgl {
   border-radius: 6px;
   border: 1px solid #cbd5e1;
   letter-spacing: 0.04em;
+}
+
+/* ==================================================
+   CURRENT WORK - TWO COLUMN GRID
+   ================================================== */
+
+.portfolio-current-work-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+
+.portfolio-current-work-grid .portfolio-project-card {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+/* Stack on smaller screens */
+@media (max-width: 850px) {
+  .portfolio-current-work-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Action button row beneath white box */
@@ -1858,6 +2067,58 @@ canvas.webgl {
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   cursor: pointer;
+}
+
+/* ==================================================
+   CELO CONTRACT GLYPH
+   ================================================== */
+
+.portfolio-celo-link {
+  width: 46px;
+  height: 46px;
+
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+}
+
+.portfolio-celo-icon {
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: rgba(255, 255, 255, 0.78);
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.25s ease;
+}
+
+.portfolio-celo-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Celo glow */
+.portfolio-celo-link:hover .portfolio-celo-icon {
+  color: #f5ff7a;
+
+  transform:
+    scale(1.16)
+    rotate(-4deg);
+
+  filter:
+    drop-shadow(0 0 4px rgba(255, 255, 255, 0.9))
+    drop-shadow(0 0 9px rgba(245, 255, 122, 0.8))
+    drop-shadow(0 0 18px rgba(245, 255, 122, 0.48));
 }
 
 .portfolio-repo-box:hover {

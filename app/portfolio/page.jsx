@@ -303,13 +303,13 @@ also experimenting with ML/DL-based market analysis and financial modeling.
         </p>
           <div className="portfolio-white-pills">
   <span className="portfolio-white-pill">🌐 Web3 &amp; Blockchain</span>
-  <span className="portfolio-white-pill">⚡ DeFi Protocols</span>
+  
   <span className="portfolio-white-pill">📈 Quant Finance</span>
-  <span className="portfolio-white-pill">♟️ Game Theory</span>
+  
   <span className="portfolio-white-pill">🎲 Stochastic Modeling</span>
   <span className="portfolio-white-pill">🤖 AI &amp; Machine Learning</span>
-  <span className="portfolio-white-pill">📊 Financial Modeling</span>
-  <span className="portfolio-white-pill">🥽 VR Systems</span>
+  
+  
   <span className="portfolio-white-pill">🧩 Human Behavior Modeling</span>
   <span className="portfolio-white-pill">🔗 Decentralized Systems</span>
 </div>
@@ -368,105 +368,215 @@ also experimenting with ML/DL-based market analysis and financial modeling.
             <div className="portfolio-section-head">
               <h3 className="portfolio-section-title">Projects</h3>
               <p className="portfolio-section-sub">
-                ARCHITECTING TRANSPARENT PROTOCOLS &amp; QUANTITATIVE SYSTEMS
+                ARCHITECTING TRANSPARENT PROTOCOLS &amp; QUANTITATIVE FINANCE
               </p>
             </div>
 
             {/* Two Cards with the same translucent bg */}
             <div className="portfolio-projects-grid">
               {/* Card 1: EcoQuant */}
-              <article className="portfolio-project-card">
-                <div>
-                  <span className="portfolio-card-badge">REFI // AI AUDITING</span>
-                  <h4 className="portfolio-project-name">EcoQuant</h4>
-                  <p className="portfolio-project-quote">
-                    &ldquo;EcoQuant&rdquo; - Revolutionizing Carbon Credits through
-                    Transparent Tokenization &amp; AI-Driven Verification
-                  </p>
-                  <p className="portfolio-project-details">
-                    Eliminates greenwashing and double-counting in carbon credit
-                    markets. Couples automated satellite data telemetry and
-                    machine-learning verification pipelines with on-chain token
-                    minting, establishing immutable provenance and auditable
-                    ecological metrics.
-                  </p>
+              {/* Card 1: EcoQuant */}
+<article className="portfolio-project-card">
+  <div>
+    <span className="portfolio-card-badge">
+      CELO // CARBON MARKETS // ML
+    </span>
 
-                  <div className="portfolio-tech-tags">
-                    <span className="portfolio-tech-tag">AI Verification</span>
-                    <span className="portfolio-tech-tag">Tokenization</span>
-                    <span className="portfolio-tech-tag">Carbon Credits</span>
-                    <span className="portfolio-tech-tag">Solidity</span>
-                    <span className="portfolio-tech-tag">IPFS</span>
-                  </div>
-                </div>
+    <h4 className="portfolio-project-name">
+      EcoQuant
+    </h4>
 
-                <div>
-                  {/* View Repository Box for EcoQuant */}
-                  <a
-                    href="https://github.com/theskepticgeek/EcoQuant"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="portfolio-repo-box"
-                    title="View EcoQuant repository on GitHub"
-                  >
-                    <span className="portfolio-repo-icon">
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                      </svg>
-                    </span>
-                    <span>View Repository</span>
-                    <span className="portfolio-repo-arrow">↗</span>
-                  </a>
-                </div>
-              </article>
+    <p className="portfolio-project-quote">
+      A decentralized carbon-finance platform for verifying,
+  tokenizing and trading traceable carbon credits.
+    </p>
+
+    <div className="portfolio-project-details">
+  <p>
+    - Built a decentralized carbon-credit ecosystem on Celo Sepolia
+    for verification, tokenization and investment.
+  </p>
+
+  <p>
+    - Deployed EQT, an ERC-20 representing verified carbon offsets,
+    with contributor and investor dashboards for geo-mapped projects,
+    trading and Ubeswap V3 liquidity.
+  </p>
+
+  <p>
+    - Integrated IPFS proof storage and ML-driven monitoring,
+    verification and valuation with transparent on-chain tracking.
+  </p>
+</div>
+    {/* EQT Contract */}
+    <div
+      style={{
+        marginTop: "16px",
+        marginBottom: "18px",
+      }}
+    >
+      <span
+        className="portfolio-card-badge"
+        style={{
+          display: "inline-block",
+          marginBottom: "8px",
+        }}
+      >
+        EQT // ERC-20 CONTRACT
+      </span>
+
+      <a
+        href="https://celo-sepolia.blockscout.com/token/0xe00b540dfb16dbe12b80ef89f3172ffe3305ac7b"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="portfolio-contract-link"
+        title="View EQT contract on Celo Sepolia Blockscout"
+      >
+        0xe00b540d...3305ac7b
+        <span style={{ marginLeft: "7px" }}>↗</span>
+      </a>
+    </div>
+
+    <div className="portfolio-tech-tags">
+      <span className="portfolio-tech-tag">Solidity</span>
+      <span className="portfolio-tech-tag">Celo</span>
+      <span className="portfolio-tech-tag">Web3.js</span>
+      <span className="portfolio-tech-tag">React.js</span>
+      <span className="portfolio-tech-tag">ERC-20</span>
+      <span className="portfolio-tech-tag">IPFS</span>
+      <span className="portfolio-tech-tag">Machine Learning</span>
+      <span className="portfolio-tech-tag">Ubeswap V3</span>
+      <span className="portfolio-tech-tag">Smart Contracts</span>
+    </div>
+  </div>
+
+  <div className="portfolio-project-links">
+    {/* GitHub Repository */}
+    <a
+      href="https://github.com/theskepticgeek/EcoQuant"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="portfolio-repo-box"
+      title="View EcoQuant repository on GitHub"
+    >
+      <span className="portfolio-repo-icon">
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+        </svg>
+      </span>
+
+      
+      
+    </a>
+
+    {/* Celo Contract */}
+<a
+  href="https://celo-sepolia.blockscout.com/token/0xe00b540dfb16dbe12b80ef89f3172ffe3305ac7b"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="portfolio-repo-box portfolio-celo-link"
+  title="View EQT Contract on Celo Sepolia"
+  aria-label="View EQT Contract on Celo Sepolia"
+>
+  <span className="portfolio-celo-icon">
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="16"
+        r="8"
+        stroke="currentColor"
+        strokeWidth="2.4"
+      />
+
+      <circle
+        cx="20"
+        cy="16"
+        r="8"
+        stroke="currentColor"
+        strokeWidth="2.4"
+      />
+    </svg>
+  </span>
+</a>
+  </div>
+</article>
 
               {/* Card 2: SecureDeFiLending */}
               <article className="portfolio-project-card">
-                <div>
-                  <span className="portfolio-card-badge">ETHEREUM // GAME THEORY</span>
-                  <h4 className="portfolio-project-name">SecureDeFiLending</h4>
-                  <p className="portfolio-project-quote">
-                    &ldquo;SecureDeFiLending&rdquo; - A Game-Theoretic Smart
-                    Contract for Decentralized Lending on Ethereum, integrating
-                    dynamic reputation systems, collateral-backed loans, and
-                    trust-based incentives.
-                  </p>
-                  <p className="portfolio-project-details">
-                    Engineers non-cooperative game theory into decentralized loan
-                    origination. Dynamically updates borrower reputation metrics
-                    based on historical repayment behavior, minimizing capital
-                    inefficiency from extreme over-collateralization while
-                    enforcing mathematical solvency.
-                  </p>
+  <div>
+    <span className="portfolio-card-badge">
+      ETHEREUM // GAME THEORY // DEFI
+    </span>
 
-                  <div className="portfolio-tech-tags">
-                    <span className="portfolio-tech-tag">Game Theory</span>
-                    <span className="portfolio-tech-tag">DeFi Lending</span>
-                    <span className="portfolio-tech-tag">Ethereum</span>
-                    <span className="portfolio-tech-tag">Dynamic Reputation</span>
-                    <span className="portfolio-tech-tag">Smart Contracts</span>
-                  </div>
-                </div>
+    <h4 className="portfolio-project-name">
+      SecureDeFiLending
+    </h4>
 
-                <div>
-                  {/* View Repository Box for SecureDeFiLendingOptimized */}
-                  <a
-                    href="https://github.com/theskepticgeek/SecureDeFiLendingOptimized"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="portfolio-repo-box"
-                    title="View SecureDeFiLendingOptimized repository on GitHub"
-                  >
-                    <span className="portfolio-repo-icon">
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                      </svg>
-                    </span>
-                    <span>View Repository</span>
-                    <span className="portfolio-repo-arrow">↗</span>
-                  </a>
-                </div>
-              </article>
+    <p className="portfolio-project-quote">
+      &ldquo;SecureDeFiLending&rdquo; — Research and prototyping of
+      game-theoretic models for improving trust, transaction efficiency,
+      and risk management in decentralized finance systems.
+    </p>
+
+    <div className="portfolio-project-details">
+      <p>
+        - Researched and prototyped game-theoretic models to enhance trust,
+        optimize transactions, and minimize risks across decentralized
+        financial systems.
+      </p>
+
+      <p>
+        - Built mathematical models to evaluate transaction behaviour,
+        participant incentives, and strategic interactions within
+        blockchain networks.
+      </p>
+    </div>
+
+    <div className="portfolio-tech-tags">
+      <span className="portfolio-tech-tag">Blockchain</span>
+      <span className="portfolio-tech-tag">Solidity</span>
+      
+      <span className="portfolio-tech-tag">Game Theory</span>
+      <span className="portfolio-tech-tag">Probability</span>
+    </div>
+  </div>
+
+  <div className="portfolio-project-links">
+    {/* View Repository Box for SecureDeFiLendingOptimized */}
+    <a
+      href="https://github.com/theskepticgeek/SecureDeFiLendingOptimized"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="portfolio-repo-box"
+      title="View SecureDeFiLendingOptimized repository on GitHub"
+    >
+      <span className="portfolio-repo-icon">
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+        </svg>
+      </span>
+
+     
+      
+    </a>
+  </div>
+</article>
             </div>
           </section>
 
@@ -484,28 +594,94 @@ also experimenting with ML/DL-based market analysis and financial modeling.
                 ACTIVE QUANTITATIVE FINANCE RESEARCH &amp; PROTOCOL PROTOTYPING
               </p>
             </div>
+<div className="portfolio-current-work-grid">
+            <article className="portfolio-project-card">
+  <div>
+    <span className="portfolio-card-badge">
+      RESEARCH // QUANT FINANCE // DEFI
+    </span>
 
-            <article className="portfolio-current-card">
-              <span className="portfolio-card-badge">RESEARCH // QUANT FINANCE</span>
-              <h4 className="portfolio-project-name" style={{ marginTop: "12px" }}>
-                Quantitative Finance &amp; Decentralized Protocol Modeling
-              </h4>
-              <p className="portfolio-project-quote" style={{ color: "#cbd5e1" }}>
-                Currently researching mathematical models for Automated Market Makers
-                (AMMs), concentrated liquidity efficiency, and stochastic volatility
-                forecasting across decentralized exchange topologies. Exploring
-                game-theoretic incentives to build trust-minimized, sustainable
-                financial infrastructure.
-              </p>
+    <h4 className="portfolio-project-name">
+      AI-Driven DeFi Agent Simulation
+    </h4>
 
-              <div className="portfolio-tech-tags">
-                <span className="portfolio-tech-tag">AMM Curves</span>
-                <span className="portfolio-tech-tag">Quant Finance</span>
-                <span className="portfolio-tech-tag">Stochastic Models</span>
-                <span className="portfolio-tech-tag">Protocol Mechanics</span>
-                <span className="portfolio-tech-tag">Mechanism Design</span>
-              </div>
-            </article>
+    <p className="portfolio-project-quote">
+      Building an AI-driven DeFi simulation where autonomous agents perform
+      transactions and make human-like decisions.
+    </p>
+
+    <div className="portfolio-project-details">
+      <p>
+        - Integrating game-theoretic mechanisms from my previous research
+        to study how AI nodes react to incentives, risk and strategic behavior.
+      </p>
+
+      <p>
+        - Simulating autonomous DeFi participants to observe how different
+        agent behaviors emerge under changing market conditions and
+        game-theoretic incentives.
+      </p>
+    </div>
+
+    <div className="portfolio-tech-tags">
+      <span className="portfolio-tech-tag">AI Agents</span>
+      <span className="portfolio-tech-tag">DeFi</span>
+      <span className="portfolio-tech-tag">Game Theory</span>
+      <span className="portfolio-tech-tag">Multi-Agent Systems</span>
+      <span className="portfolio-tech-tag">Behavior Modeling</span>
+    </div>
+  </div>
+
+  <div>
+    <span className="portfolio-card-badge">
+      IN DEVELOPMENT
+    </span>
+  </div>
+</article>
+            <article className="portfolio-project-card">
+  <div>
+    <span className="portfolio-card-badge">
+      OPTIONS // MARKET MICROSTRUCTURE // ALGO TRADING
+    </span>
+
+    <h4 className="portfolio-project-name">
+      Options Market Microstructure &amp; Algorithmic Trading
+    </h4>
+
+    <p className="portfolio-project-quote">
+      Studying how option-chain activity relates to short-term market
+      movement and how those signals can be translated into systematic
+      trading strategies.
+    </p>
+
+    <div className="portfolio-project-details">
+      <p>
+        - Analyzing changes in open interest, volume, implied volatility
+        and strike positioning across the option chain.
+      </p>
+
+      <p>
+        - Building an option-chain simulation and backtesting framework
+        to evaluate OI-driven algorithmic trading strategies.
+      </p>
+    </div>
+
+    <div className="portfolio-tech-tags">
+      <span className="portfolio-tech-tag">Options</span>
+      <span className="portfolio-tech-tag">Open Interest</span>
+      <span className="portfolio-tech-tag">Algorithmic Trading</span>
+      <span className="portfolio-tech-tag">Backtesting</span>
+      <span className="portfolio-tech-tag">Python</span>
+    </div>
+  </div>
+
+  <div>
+    <span className="portfolio-card-badge">
+      IN DEVELOPMENT
+    </span>
+  </div>
+</article>
+</div>
           </section>
 
           {/* ==================================================================
@@ -600,7 +776,7 @@ also experimenting with ML/DL-based market analysis and financial modeling.
                     <p className="portfolio-exp-role">Co-Founder &amp; Managing Director</p>
                   </div>
                   <span className="portfolio-card-badge">
-                    STARTUP // PRODUCT &amp; RESEARCH
+                    March 2025 - Present
                   </span>
                 </div>
 
@@ -629,7 +805,7 @@ also experimenting with ML/DL-based market analysis and financial modeling.
                     <p className="portfolio-exp-role">Researcher</p>
                   </div>
                   <span className="portfolio-card-badge">
-                    ACADEMIC &amp; PROTOCOL RESEARCH
+                    Sept 2024 - Present
                   </span>
                 </div>
 
@@ -661,7 +837,10 @@ also experimenting with ML/DL-based market analysis and financial modeling.
             className="portfolio-section-divider portfolio-section-techstack"
             aria-label="Tech Stack"
           >
-            
+            <div className="portfolio-section-head">
+              <h3 className="portfolio-section-title">Tech Stack</h3>
+              
+            </div>
 
             <div className="portfolio-tech-dashboard">
               {/* Card 1: Languages */}
@@ -681,10 +860,13 @@ also experimenting with ML/DL-based market analysis and financial modeling.
                 <div className="portfolio-tech-cat-header">BLOCKCHAIN</div>
                 <div className="portfolio-tech-pills">
                   <span className="portfolio-tech-pill-item">Ethereum</span>
-                  <span className="portfolio-tech-pill-item">EVM</span>
+                  
+                  <span className="portfolio-tech-pill-item">Web3.js</span>
+                  <span className="portfolio-tech-pill-item">Ethers.js</span>
                   <span className="portfolio-tech-pill-item">Celo</span>
                   <span className="portfolio-tech-pill-item">Polygon</span>
                   <span className="portfolio-tech-pill-item">Hardhat</span>
+                  <span className="portfolio-tech-pill-item">EVM</span>
                   <span className="portfolio-tech-pill-item">Smart Contracts</span>
                   <span className="portfolio-tech-pill-item">ERC Standards</span>
                 </div>
@@ -747,9 +929,7 @@ also experimenting with ML/DL-based market analysis and financial modeling.
           >
             <div className="portfolio-section-head">
               <h3 className="portfolio-section-title">EDUCATION</h3>
-              <p className="portfolio-section-sub">
-                COMPUTER SCIENCE // MATHEMATICS // RESEARCH
-              </p>
+              
             </div>
 
             <article className="portfolio-education-card">
@@ -762,7 +942,7 @@ also experimenting with ML/DL-based market analysis and financial modeling.
                   <p className="portfolio-edu-loc">Kalyani, West Bengal, India</p>
                 </div>
                 <span className="portfolio-card-badge" style={{ alignSelf: "flex-start", whiteSpace: "nowrap" }}>
-                  B.TECH // CS
+                  Sept 2024 - Ongoing
                 </span>
               </div>
 
@@ -803,21 +983,54 @@ also experimenting with ML/DL-based market analysis and financial modeling.
 
               <p className="portfolio-contact-body">
                 I am always interested in conversations around blockchain research,
-                quantitative systems, decentralized infrastructure, game theory and
+                quantitative finance, decentralized infrastructure, game theory and
                 experimental technology. If you are working on something unusual,
                 research-driven or technically ambitious, feel free to reach out.
               </p>
 
-              <div>
-                <a
-                  href="mailto:krrishdubey12@gmail.com"
-                  className="portfolio-contact-cta"
-                  title="Send an email"
-                >
-                  <span>GET IN TOUCH</span>
-                  <span style={{ fontSize: "15px" }}>↗</span>
-                </a>
-              </div>
+              <div className="portfolio-contact-actions">
+  {/* Gmail */}
+  <a
+    href="mailto:krrishdubey12@gmail.com"
+    className="portfolio-contact-cta portfolio-contact-icon-link"
+    title="Send an email"
+    aria-label="Email Krrish"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      className="portfolio-contact-glyph"
+    >
+      <path d="M2 5.5A2.5 2.5 0 014.5 3h15A2.5 2.5 0 0122 5.5v13A2.5 2.5 0 0119.5 21h-15A2.5 2.5 0 012 18.5v-13zm2.15-.3L12 11.3l7.85-6.1A.9.9 0 0019.5 5h-15a.9.9 0 00-.35.2zM4 7.35V18.5c0 .28.22.5.5.5h15a.5.5 0 00.5-.5V7.35l-7.39 5.75a1 1 0 01-1.22 0L4 7.35z" />
+    </svg>
+
+    <span>GET IN TOUCH</span>
+    <span style={{ fontSize: "15px" }}>↗</span>
+  </a>
+
+  {/* WhatsApp */}
+  <a
+    href="https://wa.me/919330754965"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="portfolio-contact-cta portfolio-contact-icon-link portfolio-contact-whatsapp"
+    title="Message on WhatsApp"
+    aria-label="Message Krrish on WhatsApp"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      className="portfolio-contact-glyph"
+    >
+      <path d="M12.04 2A9.87 9.87 0 003.6 17.05L2 22l5.1-1.55A9.98 9.98 0 1012.04 2zm0 17.95a8.1 8.1 0 01-4.13-1.13l-.3-.18-3.03.92.98-2.94-.2-.3a8.08 8.08 0 116.68 3.63zm4.44-6.08c-.24-.12-1.43-.71-1.65-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2 0 1.18.86 2.32.98 2.48.12.16 1.69 2.58 4.1 3.62.57.25 1.02.4 1.37.51.58.18 1.1.16 1.51.1.46-.07 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z" />
+    </svg>
+
+    <span>WHATSAPP</span>
+    <span style={{ fontSize: "15px" }}>↗</span>
+  </a>
+</div>
 
               {/* Contact / Social Links below CTA */}
               <div className="portfolio-contact-socials-grid">
@@ -919,7 +1132,7 @@ also experimenting with ML/DL-based market analysis and financial modeling.
             <div className="portfolio-footer-left">
               <span className="portfolio-footer-name">KRRISH DUBEY</span>
               <span className="portfolio-footer-subtitle">
-                WEB3 // RESEARCH // QUANTITATIVE SYSTEMS
+                WEB3 // RESEARCH // Quantitative Finance
               </span>
             </div>
 
