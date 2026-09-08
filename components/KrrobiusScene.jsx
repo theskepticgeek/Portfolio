@@ -250,7 +250,7 @@ function fitCameraToViewport(width, height) {
 
   return Math.min(
     window.devicePixelRatio || 1,
-    isMobile ? 1.5 : 3
+    isMobile ? 1.5 : 4
   );
 };
 
@@ -2802,20 +2802,20 @@ const getViewportSize = () => {
 const handleResize = () => {
   const { width, height } = getViewportSize();
 
-  // Fit the Möbius strip inside the available viewport.
+  // Fit Möbius to current viewport.
   fitCameraToViewport(width, height);
+
+  // IMPORTANT:
+  // Browser zoom changes devicePixelRatio,
+  // so recalculate DPR every time.
+  renderer.setPixelRatio(
+    getRenderPixelRatio()
+  );
 
   renderer.setSize(
     width,
     height,
     false
-  );
-
-  renderer.setPixelRatio(
-    Math.min(
-      window.devicePixelRatio || 1,
-      2
-    )
   );
 
   resizeBackground();
